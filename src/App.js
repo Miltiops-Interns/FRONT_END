@@ -34,7 +34,7 @@ const MenuSection = () => {
             "https://images.unsplash.com/photo-1601050592132-0d033d09c3c3?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
         },
         {
-          name: "Paneer Tikka",
+          name: "Paneer Masala",
           price: "$8.99",
           description: "Grilled cottage cheese with Indian spices",
           image:
