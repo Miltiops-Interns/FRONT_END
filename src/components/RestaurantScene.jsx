@@ -9,7 +9,7 @@ function SalonScene() {
   // Using a sample panoramic image from a CDN
   const texture = useTexture(
     {
-      map: "/images/hotelview.jpg", // Replace with your panoramic image URL
+      map: "/images/hotel_saloni.jpg",
     },
     // Success callback
     () => {

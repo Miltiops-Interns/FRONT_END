@@ -1,9 +1,40 @@
-import React from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 
 const ContactPage = () => {
+  // State for form fields
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [message, setMessage] = useState("");
+  const [status, setStatus] = useState(null); // success or error
+
+  // Handle form submission
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setStatus(null);
+    try {
+      const res = await fetch("http://localhost:5000/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, phone, message }),
+      });
+      if (res.ok) {
+        setStatus("success");
+        setName("");
+        setEmail("");
+        setPhone("");
+        setMessage("");
+      } else {
+        setStatus("error");
+      }
+    } catch (err) {
+      setStatus("error");
+    }
+  };
+
   return (
     <div className="contact-page">
       <Navbar />
@@ -28,18 +59,22 @@ const ContactPage = () => {
             className="contact-info"
           >
             <h2>Get in Touch</h2>
+            <br></br>
             <div className="info-item">
               <i className="fas fa-map-marker-alt"></i>
               <div>
                 <h3>Location</h3>
-                <p>123 Spice Street, Foodville, FL 12345</p>
+                <p>
+                  Koti, Solan, NH-22, Ambala Shimla Kaurik Road, Dharampur,
+                  Dharampur, Himachal Pradesh 173209
+                </p>
               </div>
             </div>
             <div className="info-item">
               <i className="fas fa-phone"></i>
               <div>
                 <h3>Phone</h3>
-                <p>(555) 123-4567</p>
+                <p>09896532415</p>
               </div>
             </div>
             <div className="info-item">
@@ -65,9 +100,15 @@ const ContactPage = () => {
             transition={{ duration: 0.6 }}
             className="contact-form-container"
           >
-            <form className="contact-form">
+            <form className="contact-form" onSubmit={handleSubmit}>
               <div className="form-group">
-                <input type="text" placeholder="Your Name" required />
+                <input
+                  type="text"
+                  placeholder="Your Name"
+                  required
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                />
                 <motion.div
                   className="form-line"
                   whileFocus={{ scaleX: 1 }}
@@ -75,7 +116,13 @@ const ContactPage = () => {
                 />
               </div>
               <div className="form-group">
-                <input type="email" placeholder="Your Email" required />
+                <input
+                  type="email"
+                  placeholder="Your Email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
                 <motion.div
                   className="form-line"
                   whileFocus={{ scaleX: 1 }}
@@ -83,7 +130,12 @@ const ContactPage = () => {
                 />
               </div>
               <div className="form-group">
-                <input type="tel" placeholder="Your Phone" />
+                <input
+                  type="tel"
+                  placeholder="Your Phone"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                />
                 <motion.div
                   className="form-line"
                   whileFocus={{ scaleX: 1 }}
@@ -91,7 +143,12 @@ const ContactPage = () => {
                 />
               </div>
               <div className="form-group">
-                <textarea placeholder="Your Message" required></textarea>
+                <textarea
+                  placeholder="Your Message"
+                  required
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                ></textarea>
                 <motion.div
                   className="form-line"
                   whileFocus={{ scaleX: 1 }}
@@ -106,6 +163,16 @@ const ContactPage = () => {
               >
                 Send Message
               </motion.button>
+              {status === "success" && (
+                <div className="success-message">
+                  Thank you! Your message has been sent.
+                </div>
+              )}
+              {status === "error" && (
+                <div className="error-message">
+                  Sorry, there was a problem. Please try again.
+                </div>
+              )}
             </form>
           </motion.div>
         </div>
@@ -115,13 +182,14 @@ const ContactPage = () => {
         <div className="map-container">
           {/* Add your map component or iframe here */}
           <iframe
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d387193.30591910525!2d-74.25986432970718!3d40.697149422113014!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c24fa5d33f083b%3A0xc80b8f06e177fe62!2sNew%20York%2C%20NY%2C%20USA!5e0!3m2!1sen!2s!4v1647043087964!5m2!1sen!2s"
+            src="https://www.google.com/maps?q=Koti,+Solan,+NH-22,+Ambala+Shimla+Kaurik+Road,+Dharampur,+Himachal+Pradesh+173209&output=embed"
             width="100%"
             height="450"
             style={{ border: 0 }}
             allowFullScreen=""
             loading="lazy"
-          ></iframe>
+            referrerPolicy="no-referrer-when-downgrade"
+          />
         </div>
       </section>
 

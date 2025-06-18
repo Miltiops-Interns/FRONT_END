@@ -67,10 +67,11 @@ const Footer = () => {
         <div className="footer-section">
           <h4>Contact Info</h4>
           <p>
-            <i className="fas fa-map-marker-alt"></i>solan Koti
+            <i className="fas fa-map-marker-alt"></i> 123 Spice Street,
+            Foodville, FL 12345
           </p>
           <p>
-            <i className="fas fa-phone"></i> (555) 13564654
+            <i className="fas fa-phone"></i> 09896532415
           </p>
           <p>
             <i className="fas fa-envelope"></i> newi@punjabirasoi.com
@@ -81,13 +82,16 @@ const Footer = () => {
           <h4>Opening Hours</h4>
           <p>Monday - Friday: 11:00 AM - 10:00 PM</p>
           <p>Saturday - Sunday: 10:00 AM - 11:00 PM</p>
-          <motion.button
-            className="reservation-btn"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            Make a Reservation
-          </motion.button>
+          <Link to="/contact" style={{ width: "100%" }}>
+            <motion.button
+              className="reservation-btn"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              style={{ width: "100%" }}
+            >
+              Make a Reservation
+            </motion.button>
+          </Link>
         </div>
       </div>
 

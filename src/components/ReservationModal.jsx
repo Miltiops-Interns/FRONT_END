@@ -87,7 +87,7 @@ const ReservationModal = ({ isOpen, onClose }) => {
                 className="success-message"
               >
                 <i className="fas fa-check-circle"></i>
-                <p>Reservation confirmed! We'll contact you shortly.</p>
+                <p>Reservation sent! We'll contact you shortly.</p>
               </motion.div>
             ) : (
               <form onSubmit={handleSubmit}>
