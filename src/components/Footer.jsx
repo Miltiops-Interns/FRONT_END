@@ -67,14 +67,13 @@ const Footer = () => {
         <div className="footer-section">
           <h4>Contact Info</h4>
           <p>
-            <i className="fas fa-map-marker-alt"></i> 123 Spice Street,
-            Foodville, FL 12345
+            <i className="fas fa-map-marker-alt"></i>solan Koti
           </p>
           <p>
-            <i className="fas fa-phone"></i> (555) 123-4567
+            <i className="fas fa-phone"></i> (555) 13564654
           </p>
           <p>
-            <i className="fas fa-envelope"></i> info@punjabirasoi.com
+            <i className="fas fa-envelope"></i> newi@punjabirasoi.com
           </p>
         </div>
 

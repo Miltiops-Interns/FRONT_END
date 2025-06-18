@@ -1,13 +1,6 @@
 import React, { useRef, useEffect, useState } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
-import {
-  OrbitControls,
-  Environment,
-  PresentationControls,
-  useTexture,
-  Sphere,
-  Html,
-} from "@react-three/drei";
+import { OrbitControls, useTexture, Sphere, Html } from "@react-three/drei";
 
 function SalonScene() {
   const sphereRef = useRef();
@@ -16,7 +9,7 @@ function SalonScene() {
   // Using a sample panoramic image from a CDN
   const texture = useTexture(
     {
-      map: "https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/2294472375_24a3b8ef46_o.jpg",
+      map: "/images/hotelview.jpg", // Replace with your panoramic image URL
     },
     // Success callback
     () => {
