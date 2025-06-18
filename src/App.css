@@ -461,19 +461,20 @@ body {
   align-items: center;
 }
 
-.nav-links a {
-  color: white;
+.navbar .nav-links a {
+  color: var(--primary-color);
   text-decoration: none;
   font-weight: 500;
   font-size: 1.1rem;
-  transition: color 0.3s ease;
+  transition: color 0.3s;
 }
 
 .navbar.scrolled .nav-links a {
-  color: #333;
+  color: var(--primary-color);
 }
 
-.nav-links a:hover {
+.navbar .nav-links a.active,
+.navbar .nav-links a:hover {
   color: var(--secondary-color);
 }
 
