@@ -130,7 +130,7 @@ const RestaurantScene = () => {
         className={`scene-container ${isVisible ? "visible" : ""}`}
       >
         <div className="scene-content">
-          <h2>Experience Our Mountain View Salon</h2>
+          <h2>Experience Our Mountain View Saloni</h2>
           <p>
             Take a virtual tour of our elegant salon in Koti, Himachal Pradesh
           </p>
