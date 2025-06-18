@@ -166,6 +166,8 @@ const MenuSection = () => {
                   key={category.category}
                   className="menu-category"
                   variants={menuVariants}
+                  initial="hidden"
+                  animate="visible"
                 >
                   <div className="menu-items">
                     {category.items.map((item) => (

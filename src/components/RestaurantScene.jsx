@@ -16,7 +16,7 @@ function SalonScene() {
   // Using a sample panoramic image from a CDN
   const texture = useTexture(
     {
-      map: "https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/2294472375_24a3b8ef46_o.jpg",
+      map: "/images/hotel_saloni.jpg",
     },
     // Success callback
     () => {
