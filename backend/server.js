@@ -1,37 +1,32 @@
-const express = require("express");
-const mongoose = require("mongoose");
-const cors = require("cors");
+const express = require('express');
+const mongoose = require('mongoose');
+const cors = require('cors');
+require('dotenv').config();
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Connect to MongoDB
-mongoose.connect("mongodb://localhost:27017/restaurant", {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
+
+
+// Connect MongoDB
+mongoose.connect('mongodb://localhost:27017/restaurant-app');
+
+// Routes
+const authRoutes = require('./routes/auth');
+app.use('/api/auth', authRoutes);
+
+const menuRoutes = require('./routes/menu');
+app.use('/api/menu', menuRoutes);
+
+
+//  1. Import verifyToken middleware
+const verifyToken = require('./middleware/verifyToken');
+
+//  2. Add a protected route
+app.get('/api/secret', verifyToken, (req, res) => {
+  res.json({ message: "This is protected data. You made it 🔒" });
 });
 
-// Define a schema and model
-const contactSchema = new mongoose.Schema({
-  name: String,
-  email: String,
-  message: String,
-  createdAt: { type: Date, default: Date.now },
-});
-const Contact = mongoose.model("Contact", contactSchema);
-
-// API endpoint to receive contact form submissions
-app.post("/api/contact", async (req, res) => {
-  try {
-    const contact = new Contact(req.body);
-    await contact.save();
-    res.status(201).json({ message: "Contact saved!" });
-  } catch (err) {
-    res.status(500).json({ error: "Failed to save contact." });
-  }
-});
-
-app.listen(5000, () => {
-  console.log("Server running on http://localhost:5000");
-});
+// Listen
+app.listen(5000, () => console.log('Backend running on port 5000'));
