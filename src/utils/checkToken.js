@@ -1,13 +1,13 @@
 export const checkToken = async () => {
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem("token");
   if (!token) return false;
 
   try {
-    const res = await fetch('http://localhost:5000/api/auth/me', {
-      method: 'GET',
+    const res = await fetch("http://localhost:5000/api/auth/me", {
+      method: "GET",
       headers: {
-        Authorization: `Bearer ${token}`
-      }
+        Authorization: `Bearer ${token}`,
+      },
     });
 
     return res.status === 200;

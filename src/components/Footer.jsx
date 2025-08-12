@@ -67,8 +67,8 @@ const Footer = () => {
         <div className="footer-section">
           <h4>Contact Info</h4>
           <p>
-            <i className="fas fa-map-marker-alt"></i> 123 Spice Street,
-            Foodville, FL 12345
+            <i className="fas fa-map-marker-alt"></i> Koti, Solan, NH-22, Ambala
+            Shimla Kaurik Road, Dharampur, Dharampur, Himachal Pradesh 173209
           </p>
           <p>
             <i className="fas fa-phone"></i> 09896532415

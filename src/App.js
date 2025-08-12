@@ -16,6 +16,8 @@ import RestaurantScene from "./components/RestaurantScene";
 import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminMenuPage from "./pages/AdminMenuPage";
+import AdminReservationsPage from "./pages/AdminReservationsPage";
+import ContactMessagesPage from "./pages/ContactMessagesPage";
 
 // Menu Component
 const MenuSection = () => {
@@ -565,6 +567,8 @@ function App() {
         <Route path="/admin/login" element={<AdminLogin />} />
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
         <Route path="/admin/menu" element={<AdminMenuPage />} />
+        <Route path="/admin/reservations" element={<AdminReservationsPage />} />
+        <Route path="/admin/contact" element={<ContactMessagesPage />} />
       </Routes>
     </Router>
   );

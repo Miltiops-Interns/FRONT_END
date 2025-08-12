@@ -132,7 +132,7 @@ const RestaurantScene = () => {
         <div className="scene-content">
           <h2>Experience Our Mountain View Saloni</h2>
           <p>
-            Take a virtual tour of our elegant salon in Koti, Himachal Pradesh
+            Take a virtual tour of our elegant Hotel in Koti, Himachal Pradesh
           </p>
         </div>
         <div className="canvas-container">
