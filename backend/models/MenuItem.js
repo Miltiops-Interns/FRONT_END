@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const menuItemSchema = new mongoose.Schema({
   name: String,
@@ -8,4 +8,4 @@ const menuItemSchema = new mongoose.Schema({
   image: String, // 🔥 image URL field
 });
 
-module.exports = mongoose.model('MenuItem', menuItemSchema);
+module.exports = mongoose.model("MenuItem", menuItemSchema);

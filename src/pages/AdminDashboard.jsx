@@ -1,7 +1,7 @@
-import React, { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { checkToken } from '../utils/checkToken';
-import './AdminDashboard.css';
+import React, { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { checkToken } from "../utils/checkToken";
+import "./AdminDashboard.css";
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
@@ -10,17 +10,17 @@ const AdminDashboard = () => {
     const verify = async () => {
       const isValid = await checkToken();
       if (!isValid) {
-        localStorage.removeItem('token');
-        navigate('/admin/login');
+        localStorage.removeItem("token");
+        navigate("/admin/login");
       }
     };
 
     verify();
-  }, []);
+  }, [navigate]);
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    navigate('/admin/login');
+    localStorage.removeItem("token");
+    navigate("/admin/login");
   };
 
   return (
@@ -28,10 +28,9 @@ const AdminDashboard = () => {
       <aside className="sidebar">
         <h3>Admin Panel</h3>
         <ul>
-          <li onClick={() => navigate('/admin/dashboard')}>Dashboard</li>
-          <li onClick={() => navigate('/admin/menu')}>Manage Menu</li>
-          <li onClick={() => navigate('/admin/reservations')}>Reservations</li>
-          <li onClick={() => navigate('/admin/messages')}>Contact Messages</li>
+          <li onClick={() => navigate("/admin/menu")}>Manage Menu</li>
+          <li onClick={() => navigate("/admin/reservations")}>Reservations</li>
+          <li onClick={() => navigate("/admin/contact")}>Contact Messages</li>
         </ul>
         <button onClick={handleLogout}>Logout</button>
       </aside>
