@@ -1,93 +1,41 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const MenuSection = () => {
-  const [selectedCategory, setSelectedCategory] = useState("Starters");
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [menuItems, setMenuItems] = useState([]);
   const [hoveredItem, setHoveredItem] = useState(null);
 
-  const menuItems = [
-    {
-      category: "Starters",
-      icon: "🥟",
-      items: [
-        {
-          name: "Punjabi Samosa",
-          price: "$5.99",
-          description: "Crispy pastry filled with spiced potatoes and peas",
-          image:
-            "https://images.unsplash.com/photo-1601050592132-0d033d09c3c3?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
-        },
-        {
-          name: "Paneer Tikka",
-          price: "$8.99",
-          description: "Grilled cottage cheese with Indian spices",
-          image:
-            "https://images.unsplash.com/photo-1565557623262-b51c2513a641?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
-        },
-        {
-          name: "Veg Pakora",
-          price: "$6.99",
-          description: "Assorted vegetables in spiced chickpea batter",
-          image:
-            "https://images.unsplash.com/photo-1603133872878-684f208fb84b?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
-        },
-      ],
-    },
-    {
-      category: "Main Course",
-      icon: "🍛",
-      items: [
-        {
-          name: "Butter Chicken",
-          price: "$16.99",
-          description: "Tender chicken in rich tomato and butter sauce",
-          image:
-            "https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
-        },
-        {
-          name: "Palak Paneer",
-          price: "$14.99",
-          description: "Cottage cheese in creamy spinach gravy",
-          image:
-            "https://images.unsplash.com/photo-1585937421612-70a008356fbe?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
-        },
-        {
-          name: "Chole Bhature",
-          price: "$13.99",
-          description: "Spiced chickpeas with fluffy fried bread",
-          image:
-            "https://images.unsplash.com/photo-1565557623262-b51c2513a641?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
-        },
-      ],
-    },
-    {
-      category: "Breads",
-      icon: "🥖",
-      items: [
-        {
-          name: "Butter Naan",
-          price: "$3.99",
-          description: "Soft leavened bread baked in tandoor",
-          image:
-            "https://images.unsplash.com/photo-1603133872878-684f208fb84b?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
-        },
-        {
-          name: "Garlic Naan",
-          price: "$4.99",
-          description: "Naan topped with garlic and butter",
-          image:
-            "https://images.unsplash.com/photo-1601050592132-0d033d09c3c3?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
-        },
-        {
-          name: "Laccha Paratha",
-          price: "$4.99",
-          description: "Layered whole wheat flatbread",
-          image:
-            "https://images.unsplash.com/photo-1585937421612-70a008356fbe?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
-        },
-      ],
-    },
-  ];
+  useEffect(() => {
+    const fetchMenu = async () => {
+      try {
+        const res = await fetch("http://localhost:5000/api/menu");
+        const data = await res.json();
+
+        const grouped = data.reduce((acc, item) => {
+          const cat = item.category;
+          if (!acc[cat]) acc[cat] = [];
+          acc[cat].push(item);
+          return acc;
+        }, {});
+
+        const formatted = Object.entries(grouped).map(([category, items]) => ({
+          category,
+          icon: "🍽️", // optional: you can customize per category
+          items,
+        }));
+
+        setMenuItems(formatted);
+        if (formatted.length > 0) {
+          setSelectedCategory(formatted[0].category);
+        }
+      } catch (err) {
+        console.error("Failed to fetch menu:", err);
+      }
+    };
+
+    fetchMenu();
+  }, []);
 
   const menuVariants = {
     hidden: { opacity: 0, y: 50 },
@@ -172,7 +120,7 @@ const MenuSection = () => {
                   <div className="menu-items">
                     {category.items.map((item) => (
                       <motion.div
-                        key={item.name}
+                        key={item._id}
                         className="menu-item"
                         variants={itemVariants}
                         whileHover="hover"
@@ -180,7 +128,13 @@ const MenuSection = () => {
                         onHoverEnd={() => setHoveredItem(null)}
                       >
                         <div className="menu-item-image">
-                          <img src={item.image} alt={item.name} />
+                          <img
+                            src={
+                              item.image ||
+                              "https://via.placeholder.com/150?text=No+Image"
+                            }
+                            alt={item.name}
+                          />
                           <motion.div
                             className="image-overlay"
                             initial={{ opacity: 0 }}
@@ -196,7 +150,7 @@ const MenuSection = () => {
                               className="price"
                               whileHover={{ scale: 1.1, color: "#FF4500" }}
                             >
-                              {item.price}
+                              ₹{item.price}
                             </motion.span>
                           </div>
                           <p>{item.description}</p>
