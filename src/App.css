@@ -1002,6 +1002,10 @@ body {
   color: #888;
   font-size: 0.9rem;
 }
+.footer-admin-link {
+  text-decoration: none;
+  color: #888;
+}
 
 /* Contact Section Styles */
 .contact-section {
@@ -1150,6 +1154,8 @@ body {
   cursor: pointer;
   transition: all 0.3s ease;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  margin-bottom: 25px;
+  margin-right: 10px;
 }
 
 .cta-button:hover {
