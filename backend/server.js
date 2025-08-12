@@ -1,32 +1,41 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const cors = require('cors');
-require('dotenv').config();
+const express = require("express");
+const mongoose = require("mongoose");
+const cors = require("cors");
+require("dotenv").config();
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-
-
 // Connect MongoDB
-mongoose.connect('mongodb://localhost:27017/restaurant-app');
+mongoose.connect("mongodb://localhost:27017/restaurant-app");
 
 // Routes
-const authRoutes = require('./routes/auth');
-app.use('/api/auth', authRoutes);
+const authRoutes = require("./routes/auth");
+app.use("/api/auth", authRoutes);
 
-const menuRoutes = require('./routes/menu');
-app.use('/api/menu', menuRoutes);
+const menuRoutes = require("./routes/menu");
+app.use("/api/menu", menuRoutes);
 
+const contactRoutes = require("./routes/contact");
+app.use("/api/contact", contactRoutes);
+
+const messagesRoutes = require("./routes/messages");
+app.use("/api/messages", messagesRoutes);
+
+const reservationRoutes = require("./routes/reservations");
+app.use("/api/reservations", reservationRoutes);
+
+const orderRoutes = require("./routes/orders");
+app.use("/api/orders", orderRoutes);
 
 //  1. Import verifyToken middleware
-const verifyToken = require('./middleware/verifyToken');
+const verifyToken = require("./middleware/verifyToken");
 
 //  2. Add a protected route
-app.get('/api/secret', verifyToken, (req, res) => {
+app.get("/api/secret", verifyToken, (req, res) => {
   res.json({ message: "This is protected data. You made it 🔒" });
 });
 
 // Listen
-app.listen(5000, () => console.log('Backend running on port 5000'));
+app.listen(5000, () => console.log("Backend running on port 5000"));

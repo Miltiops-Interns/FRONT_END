@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import "./ContactMessagesPage.css";
 import { useNavigate } from "react-router-dom";
 
-
 const ContactMessagesPage = () => {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -66,12 +65,16 @@ const ContactMessagesPage = () => {
                 <strong>Email:</strong> {msg.email}
               </p>
               <p>
-                <strong>Subject:</strong> {msg.subject || "—"}
+                <strong>Phone:</strong> {msg.phone || "—"}
               </p>
               <p>
                 <strong>Message:</strong>
                 <br />
                 {msg.message}
+              </p>
+              <p>
+                <strong>Date:</strong>{" "}
+                {new Date(msg.createdAt).toLocaleString()}
               </p>
               <button onClick={() => deleteMessage(msg._id)}>🗑️ Delete</button>
             </div>
