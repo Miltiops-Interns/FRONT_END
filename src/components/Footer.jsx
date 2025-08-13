@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
+import ReservationModal from "./ReservationModal";
 
 const Footer = () => {
+  const [isReservationOpen, setIsReservationOpen] = useState(false);
   return (
     <footer className="footer">
       <div className="footer-content">
@@ -58,9 +60,6 @@ const Footer = () => {
             <li>
               <Link to="/contact">Contact</Link>
             </li>
-            <li>
-              <a href="#about">About Us</a>
-            </li>
           </ul>
         </div>
 
@@ -82,22 +81,33 @@ const Footer = () => {
           <h4>Opening Hours</h4>
           <p>Monday - Friday: 11:00 AM - 10:00 PM</p>
           <p>Saturday - Sunday: 10:00 AM - 11:00 PM</p>
-          <Link to="/contact" style={{ width: "100%" }}>
-            <motion.button
-              className="reservation-btn"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              style={{ width: "100%" }}
-            >
-              Make a Reservation
-            </motion.button>
-          </Link>
+          <motion.button
+            className="reservation-btn"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            style={{ width: "100%" }}
+            onClick={() => setIsReservationOpen(true)}
+          >
+            Make a Reservation
+          </motion.button>
         </div>
       </div>
 
       <div className="footer-bottom">
-        <p>&copy; 2024 Punjabi Rasoi. All rights reserved.</p>
+        <p>
+          &copy; 2024 Punjabi Rasoi. All rights
+          <Link to="/admin/login" className="footer-admin-link">
+            {" "}
+            reserved
+          </Link>
+          .
+        </p>
       </div>
+
+      <ReservationModal
+        isOpen={isReservationOpen}
+        onClose={() => setIsReservationOpen(false)}
+      />
     </footer>
   );
 };

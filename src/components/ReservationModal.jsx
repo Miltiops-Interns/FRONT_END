@@ -27,9 +27,20 @@ const ReservationModal = ({ isOpen, onClose }) => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Simulate API call
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      const response = await fetch("http://localhost:5000/api/reservations", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to submit reservation");
+      }
+
       setSubmitStatus("success");
       setTimeout(() => {
         onClose();
@@ -45,6 +56,7 @@ const ReservationModal = ({ isOpen, onClose }) => {
         });
       }, 2000);
     } catch (error) {
+      console.error("Error submitting reservation:", error);
       setSubmitStatus("error");
     } finally {
       setIsSubmitting(false);

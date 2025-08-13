@@ -41,12 +41,6 @@ const Navbar = () => {
             >
               Contact
             </Link>
-            <Link
-              to="/admin/login"
-              className={location.pathname === "/admin/login" ? "active" : ""}
-            >
-              Admin Login
-            </Link>
           </div>
 
           <div className="nav-actions">

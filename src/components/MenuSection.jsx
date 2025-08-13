@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useCart } from "../context/CartContext";
+import { useNavigate } from "react-router-dom";
 
 const MenuSection = () => {
   const [selectedCategory, setSelectedCategory] = useState("");
@@ -65,6 +67,20 @@ const MenuSection = () => {
         duration: 0.3,
       },
     },
+  };
+
+  const navigate = useNavigate();
+  const { addItem } = useCart();
+
+  const handleAddToCart = (item) => {
+    // Backend returns price as number (₹) and _id as id
+    addItem({
+      id: item._id,
+      name: item.name,
+      price: Number(item.price) || 0,
+      image: item.image,
+    });
+    navigate("/cart");
   };
 
   return (
@@ -161,6 +177,7 @@ const MenuSection = () => {
                               backgroundColor: "#FF6347",
                             }}
                             whileTap={{ scale: 0.95 }}
+                            onClick={() => handleAddToCart(item)}
                           >
                             Add to Order
                           </motion.button>
