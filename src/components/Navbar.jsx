@@ -17,9 +17,12 @@ const Navbar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // Check if we're on the home page
+  const isHomePage = location.pathname === "/";
+
   return (
     <>
-      <nav className={`navbar ${isScrolled ? "scrolled" : ""}`}>
+      <nav className={`navbar ${isScrolled ? "scrolled" : ""} ${isHomePage ? "home-page" : ""}`}>
         <div className="nav-content">
           <Link to="/" className="logo">
             <span className="logo-text">Punjabi Rasoi</span>

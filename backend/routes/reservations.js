@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const Reservation = require("../models/Reservation");
 const verifyToken = require("../middleware/verifyToken");
+const { sendNotificationEmail } = require("../utils/emailService");
 
 // POST - Submit reservation form (public route)
 router.post("/", async (req, res) => {
@@ -29,6 +30,17 @@ router.post("/", async (req, res) => {
 
     // Save to database
     await newReservation.save();
+
+    // Send notification email to admin (don't wait for it)
+    sendNotificationEmail('reservation', {
+      name,
+      email,
+      phone,
+      date,
+      time,
+      guests,
+      specialRequests: specialRequests || ""
+    }).catch(err => console.error('Failed to send reservation notification email:', err));
 
     res.status(201).json({
       message: "Reservation submitted successfully",

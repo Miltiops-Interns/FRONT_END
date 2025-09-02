@@ -312,7 +312,7 @@ const HomePage = () => {
         isOpen={isReservationOpen}
         onClose={() => setIsReservationOpen(false)}
       />
-
+  
       <Footer />
     </>
   );

@@ -182,7 +182,7 @@ const ContactPage = () => {
         <div className="map-container">
           {/* Add your map component or iframe here */}
           <iframe
-            src="https://www.google.com/maps?q=Koti,+Solan,+NH-22,+Ambala+Shimla+Kaurik+Road,+Dharampur,+Himachal+Pradesh+173209&output=embed"
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3396.8234567890123!2d76.9954564!3d30.8654167!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390f8f4547b07fcf%3A0x78e05b4fa2fb20f!2sHotel%20Saloni%20(RESTAURANT%20PUNJABI%20RASOI)!5e0!3m2!1sen!2sin!4v1692345678901!5m2!1sen!2sin"
             width="100%"
             height="450"
             style={{ border: 0 }}
