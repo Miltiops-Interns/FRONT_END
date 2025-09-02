@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const Order = require("../models/Order");
 const verifyToken = require("../middleware/verifyToken");
+const { sendNotificationEmail } = require("../utils/emailService");
 
 // POST /api/orders - public: submit a new order
 router.post("/", async (req, res) => {
@@ -36,6 +37,16 @@ router.post("/", async (req, res) => {
     });
 
     await order.save();
+
+    // Send notification email to admin (don't wait for it)
+    sendNotificationEmail('order', {
+      customerName,
+      phone,
+      whatsapp: whatsapp || "",
+      items: sanitizedItems,
+      totalPrice
+    }).catch(err => console.error('Failed to send order notification email:', err));
+
     return res.status(201).json({ message: "Order received", id: order._id });
   } catch (err) {
     console.error("Error creating order:", err);

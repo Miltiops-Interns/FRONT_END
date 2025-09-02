@@ -443,12 +443,47 @@ body {
   color: var(--primary-color);
 }
 
+.navbar.scrolled .nav-links a {
+  color: var(--primary-color);
+}
+
+.navbar.scrolled .nav-links a:hover {
+  color: var(--secondary-color);
+}
+
+/* Home page specific navbar styling - only when not scrolled */
+.navbar.home-page:not(.scrolled) .nav-links a {
+  color: white;
+}
+
+.navbar.home-page:not(.scrolled) .logo {
+  color: white;
+}
+
+.navbar.home-page:not(.scrolled) .search-container input {
+  color: white;
+}
+
+.navbar.home-page:not(.scrolled) .search-container input::placeholder {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.navbar.home-page:not(.scrolled) .search-btn {
+  color: white;
+}
+
+.navbar.home-page:not(.scrolled) .search-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Active link on home page should use secondary color */
+.navbar.home-page:not(.scrolled) .nav-links a.active {
+  color: var(--secondary-color);
+}
+
+
 .logo-text {
-  background: linear-gradient(
-    135deg,
-    var(--primary-color) 0%,
-    var(--secondary-color) 100%
-  );
+  background: linear-gradient(135deg, #c5a572 0%, #c5a572 90%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   font-size: 1.8rem;
@@ -460,6 +495,7 @@ body {
   align-items: center;
 }
 
+
 .navbar .nav-links a {
   color: var(--primary-color);
   text-decoration: none;
@@ -468,9 +504,6 @@ body {
   transition: color 0.3s;
 }
 
-.navbar.scrolled .nav-links a {
-  color: var(--primary-color);
-}
 
 .navbar .nav-links a.active,
 .navbar .nav-links a:hover {
@@ -507,12 +540,12 @@ body {
   outline: none;
 }
 
-.navbar.scrolled .search-container input {
-  color: #333;
-}
-
 .search-container input::placeholder {
   color: rgba(255, 255, 255, 0.7);
+}
+
+.navbar.scrolled .search-container input {
+  color: #333;
 }
 
 .navbar.scrolled .search-container input::placeholder {
@@ -530,10 +563,6 @@ body {
   justify-content: center;
   border-radius: 50%;
   transition: all 0.3s ease;
-}
-
-.navbar.scrolled .search-btn {
-  color: #333;
 }
 
 .search-btn:hover {
@@ -656,6 +685,7 @@ body {
     font-size: 0.9rem;
   }
 }
+
 
 /* Menu Section Styles */
 .menu-section {

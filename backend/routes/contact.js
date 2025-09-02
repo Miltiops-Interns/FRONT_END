@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const ContactMessage = require("../models/ContactMessage");
+const { sendNotificationEmail } = require("../utils/emailService");
 
 // POST - Submit contact form
 router.post("/", async (req, res) => {
@@ -24,6 +25,14 @@ router.post("/", async (req, res) => {
 
     // Save to database
     await newMessage.save();
+
+    // Send notification email to admin (don't wait for it)
+    sendNotificationEmail('contact', {
+      name,
+      email,
+      phone: phone || "",
+      message
+    }).catch(err => console.error('Failed to send contact notification email:', err));
 
     res.status(201).json({
       message: "Message sent successfully",
