@@ -33,7 +33,7 @@ body {
 .hero-section {
   height: 100vh;
   width: 100%;
-  background: linear-gradient(135deg, var(--primary-color) 0%, #2c3e50 100%);
+  background: linear-gradient(135deg, var(--primary-color) 0%, #0d1925 100%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -417,6 +417,15 @@ body {
   transition: all 0.3s ease;
 }
 
+/* Navbar background for light pages */
+.menu-page .navbar,
+.contact-page .navbar,
+.admin-login-page .navbar {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+}
+
 .navbar.scrolled {
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(10px);
@@ -440,16 +449,19 @@ body {
   cursor: pointer;
 }
 
+/* Logo color for light pages */
+.menu-page .navbar .logo,
+.contact-page .navbar .logo,
+.admin-login-page .navbar .logo {
+  color: var(--primary-color);
+}
+
 .navbar.scrolled .logo {
   color: var(--primary-color);
 }
 
 .logo-text {
-  background: linear-gradient(
-    135deg,
-    var(--primary-color) 0%,
-    var(--secondary-color) 100%
-  );
+  background: linear-gradient(135deg, #c5a572 0%, #927a55 90%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   font-size: 1.8rem;
@@ -462,20 +474,53 @@ body {
 }
 
 .navbar .nav-links a {
-  color: var(--primary-color);
+  color: var(--text-light);
   text-decoration: none;
   font-weight: 500;
   font-size: 1.1rem;
-  transition: color 0.3s;
+  transition: all 0.3s ease;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  position: relative;
+}
+
+/* Navbar text colors for light pages */
+.menu-page .navbar .nav-links a,
+.contact-page .navbar .nav-links a,
+.admin-login-page .navbar .nav-links a {
+  color: var(--primary-color);
 }
 
 .navbar.scrolled .nav-links a {
   color: var(--primary-color);
 }
 
-.navbar .nav-links a.active,
+.navbar .nav-links a.active {
+  color: var(--secondary-color);
+  /* background: rgba(197, 165, 114, 0.1); */
+}
+
 .navbar .nav-links a:hover {
   color: var(--secondary-color);
+  /* background: rgba(197, 165, 114, 0.1); */
+  transform: translateY(-1px);
+}
+
+.navbar .nav-links a::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background: var(--secondary-color);
+  transition: all 0.3s ease;
+  transform: translateX(-50%);
+}
+
+.navbar .nav-links a:hover::after,
+.navbar .nav-links a.active::after {
+  width: 100%;
 }
 
 .search-container {
@@ -508,12 +553,26 @@ body {
   outline: none;
 }
 
+/* Search input color for light pages */
+.menu-page .navbar .search-container input,
+.contact-page .navbar .search-container input,
+.admin-login-page .navbar .search-container input {
+  color: #333;
+}
+
 .navbar.scrolled .search-container input {
   color: #333;
 }
 
 .search-container input::placeholder {
   color: rgba(255, 255, 255, 0.7);
+}
+
+/* Search input placeholder for light pages */
+.menu-page .navbar .search-container input::placeholder,
+.contact-page .navbar .search-container input::placeholder,
+.admin-login-page .navbar .search-container input::placeholder {
+  color: rgba(0, 0, 0, 0.5);
 }
 
 .navbar.scrolled .search-container input::placeholder {
@@ -531,6 +590,13 @@ body {
   justify-content: center;
   border-radius: 50%;
   transition: all 0.3s ease;
+}
+
+/* Search button color for light pages */
+.menu-page .navbar .search-btn,
+.contact-page .navbar .search-btn,
+.admin-login-page .navbar .search-btn {
+  color: var(--primary-color);
 }
 
 .navbar.scrolled .search-btn {
@@ -646,6 +712,7 @@ body {
 
   .nav-links a {
     font-size: 0.9rem;
+    padding: 0.4rem 0.8rem;
   }
 
   .search-container {

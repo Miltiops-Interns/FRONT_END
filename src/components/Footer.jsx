@@ -26,7 +26,8 @@ const Footer = () => {
               <i className="fab fa-facebook-f"></i>
             </motion.a>
             <motion.a
-              href="https://instagram.com"
+              href="https://www.instagram.com/hotel_saloni_?igsh=MTlibXV5cXV5bXd1eg==
+ "
               target="_blank"
               rel="noopener noreferrer"
               className="social-link"

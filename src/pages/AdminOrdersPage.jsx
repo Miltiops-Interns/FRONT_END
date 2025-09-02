@@ -100,6 +100,12 @@ We'll keep you updated on your order status. Thank you for choosing Punjabi Raso
 
   return (
     <div className="admin-orders-page">
+      <button
+        onClick={() => navigate("/admin/dashboard")}
+        className="dashboard-btn"
+      >
+        🏠 Back to Dashboard
+      </button>
       <div className="orders-header">
         <h2>Orders Management</h2>
         <p>View and manage customer orders</p>
