@@ -1,3 +1,4 @@
+// backend/server.js
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
@@ -8,9 +9,10 @@ app.use(cors());
 app.use(express.json());
 
 // Connect MongoDB
-mongoose.connect("mongodb://localhost:27017/restaurant-app");
+const mongoUri = process.env.MONGO_URI || "mongodb://localhost:27017/restaurant-app";
+mongoose.connect(mongoUri);
 
-// Routes
+// Routes (unchanged)
 const authRoutes = require("./routes/auth");
 app.use("/api/auth", authRoutes);
 
@@ -29,13 +31,12 @@ app.use("/api/reservations", reservationRoutes);
 const orderRoutes = require("./routes/orders");
 app.use("/api/orders", orderRoutes);
 
-//  1. Import verifyToken middleware
+// Protected route
 const verifyToken = require("./middleware/verifyToken");
-
-//  2. Add a protected route
 app.get("/api/secret", verifyToken, (req, res) => {
   res.json({ message: "This is protected data. You made it 🔒" });
 });
 
 // Listen
-app.listen(5000, () => console.log("Backend running on port 5000"));
+const port = process.env.PORT || 5000;
+app.listen(port, () => console.log(`Backend running on port ${port}`));
