@@ -1,16 +1,46 @@
 // backend/server.js
 const express = require("express");
+const path = require("path");
 const mongoose = require("mongoose");
 const cors = require("cors");
-require("dotenv").config();
+require("dotenv").config({ path: path.join(__dirname, ".env") });
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
 // Connect MongoDB
-const mongoUri = process.env.MONGO_URI || "mongodb://localhost:27017/restaurant-app";
-mongoose.connect(mongoUri);
+const fallbackMongoUri =
+  "mongodb+srv://divyantwal049:Abhi%40049@hotelwebsite.gtvkgnb.mongodb.net/?retryWrites=true&w=majority&appName=hotelwebsite";
+const usingEnvMongoUri = Boolean(process.env.MONGO_URI);
+const mongoUri = usingEnvMongoUri ? process.env.MONGO_URI : fallbackMongoUri;
+
+// Guard against malformed URIs copied from Atlas with angle brackets or un-encoded passwords
+let effectiveMongoUri = mongoUri;
+if (/[<>]/.test(mongoUri)) {
+  console.warn(
+    "Invalid MONGO_URI detected (angle brackets present). Falling back to encoded default. Please fix backend/.env (encode @ as %40)."
+  );
+  effectiveMongoUri = fallbackMongoUri;
+}
+
+const maskedUri = effectiveMongoUri
+  .replace(/(mongodb\+srv:\/\/[^:]+:)[^@]*/, "$1****")
+  .replace(/@.*/, "@<host-and-options-hidden>");
+console.log(
+  "Using MONGO_URI from env:",
+  usingEnvMongoUri && effectiveMongoUri === mongoUri
+);
+console.log("Connecting to MongoDB with URI:", maskedUri);
+
+mongoose
+  .connect(effectiveMongoUri)
+  .then(() => {
+    console.log("MongoDB connected successfully");
+  })
+  .catch((error) => {
+    console.error("MongoDB connection error:", error);
+  });
 
 // Routes (unchanged)
 const authRoutes = require("./routes/auth");
