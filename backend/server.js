@@ -67,6 +67,9 @@ app.get("/api/secret", verifyToken, (req, res) => {
   res.json({ message: "This is protected data. You made it 🔒" });
 });
 
-// Listen
+// Listen on all interfaces so other devices can access
 const port = process.env.PORT || 5000;
-app.listen(port, () => console.log(`Backend running on port ${port}`));
+const host = process.env.HOST || "0.0.0.0";
+app.listen(port, host, () =>
+  console.log(`Backend running on http://${host}:${port}`)
+);
