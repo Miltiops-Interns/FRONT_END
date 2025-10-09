@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import { apiFetch } from "../utils/api";
 
 const ContactPage = () => {
   // State for form fields
@@ -16,7 +17,7 @@ const ContactPage = () => {
     e.preventDefault();
     setStatus(null);
     try {
-      const res = await fetch("http://localhost:5000/api/contact", {
+      const res = await apiFetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, email, phone, message }),

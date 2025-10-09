@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./AdminReservationsPage.css";
 import { useNavigate } from "react-router-dom";
+import { apiFetch } from "../utils/api";
 
 const AdminReservationsPage = () => {
   const [reservations, setReservations] = useState([]);
@@ -10,7 +11,7 @@ const AdminReservationsPage = () => {
   useEffect(() => {
     const fetchReservations = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/reservations", {
+        const res = await apiFetch("/api/reservations", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -29,17 +30,14 @@ const AdminReservationsPage = () => {
 
   const updateStatus = async (id, newStatus) => {
     try {
-      const response = await fetch(
-        `http://localhost:5000/api/reservations/${id}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ status: newStatus }),
-        }
-      );
+      const response = await apiFetch(`/api/reservations/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ status: newStatus }),
+      });
 
       if (response.ok) {
         setReservations((prev) =>
@@ -57,15 +55,12 @@ const AdminReservationsPage = () => {
     if (!window.confirm("Delete this reservation?")) return;
 
     try {
-      const response = await fetch(
-        `http://localhost:5000/api/reservations/${id}`,
-        {
-          method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await apiFetch(`/api/reservations/${id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       if (response.ok) {
         setReservations((prev) => prev.filter((res) => res._id !== id));

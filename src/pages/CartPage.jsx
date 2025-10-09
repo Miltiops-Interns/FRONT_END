@@ -5,6 +5,7 @@ import Footer from "../components/Footer";
 import { useCart } from "../context/CartContext";
 import { Link, useNavigate } from "react-router-dom";
 import "./CartPage.css";
+import { apiFetch } from "../utils/api";
 
 const currency = (amount) => `₹${amount.toFixed(2)}`;
 
@@ -31,7 +32,7 @@ const CartPage = () => {
   useEffect(() => {
     const fetchMenu = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/menu");
+        const res = await apiFetch("/api/menu");
         const data = await res.json();
 
         const grouped = data.reduce((acc, item) => {
@@ -72,7 +73,7 @@ const CartPage = () => {
       return;
     }
     try {
-      const res = await fetch("http://localhost:5000/api/orders", {
+      const res = await apiFetch("/api/orders", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

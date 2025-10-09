@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { apiFetch } from "./utils/api";
 
 import "./App.css";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
@@ -17,7 +18,7 @@ import ContactMessagesPage from "./pages/ContactMessagesPage";
 import CartPage from "./pages/CartPage";
 import { CartProvider } from "./context/CartContext";
 import AdminOrdersPage from "./pages/AdminOrdersPage";
-import {S1,S2,S3} from "./components/FoodScene";
+import { S1, S2, S3 } from "./components/FoodScene";
 import FoodOrderIcon from "./components/FoodOrderIcon";
 import CookingPotIcon from "./components/CookingPotIcon";
 import DeliveryScooterIcon from "./components/DeliveryScooterIcon";
@@ -32,21 +33,33 @@ const HomePage = () => {
     {
       title: "Authentic Flavors",
       description: "Experience the rich and authentic taste of Punjab",
-      icon: <div style={{ transform: 'scale(0.6)' }}><FoodOrderIcon /></div>,
+      icon: (
+        <div style={{ transform: "scale(0.6)" }}>
+          <FoodOrderIcon />
+        </div>
+      ),
       image:
         "https://images.unsplash.com/photo-1585937421612-70a008356fbe?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
     },
     {
       title: "Traditional Ambiance",
       description: "Immerse yourself in the warm and inviting atmosphere",
-      icon: <div style={{ transform: 'scale(0.6)' }}><DeliveryScooterIcon /></div>,
+      icon: (
+        <div style={{ transform: "scale(0.6)" }}>
+          <DeliveryScooterIcon />
+        </div>
+      ),
       image:
         "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
     },
     {
       title: "Expert Chefs",
       description: "Our master chefs bring decades of culinary expertise",
-      icon: <div style={{ transform: 'scale(0.6)' }}><CookingPotIcon /></div>,
+      icon: (
+        <div style={{ transform: "scale(0.6)" }}>
+          <CookingPotIcon />
+        </div>
+      ),
       image:
         "https://images.unsplash.com/photo-1563245372-f21724e3856d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
     },
@@ -56,7 +69,7 @@ const HomePage = () => {
   useEffect(() => {
     const fetchReviews = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/reviews");
+        const response = await apiFetch("/api/reviews");
         const data = await response.json();
         setTestimonials(data);
       } catch (error) {
@@ -99,7 +112,6 @@ const HomePage = () => {
   return (
     <>
       <Navbar />
-      
 
       {/* Hero Section */}
       <motion.section
@@ -149,7 +161,6 @@ const HomePage = () => {
           </motion.div>
         </div>
       </motion.section>
-      
 
       {/* Features Section */}
       <motion.section
@@ -161,7 +172,6 @@ const HomePage = () => {
       >
         <div className="features-container">
           {features.map((feature, index) => (
-            
             <motion.div
               key={feature.title}
               className="feature-card"
@@ -276,7 +286,6 @@ const HomePage = () => {
           )}
         </div>
       </motion.section>
-     
 
       {/* CTA Section */}
       <motion.section
@@ -320,7 +329,7 @@ const HomePage = () => {
         isOpen={isReservationOpen}
         onClose={() => setIsReservationOpen(false)}
       />
-    
+
       <Footer />
     </>
   );

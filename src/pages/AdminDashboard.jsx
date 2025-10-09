@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { checkToken } from "../utils/checkToken";
 import "./AdminDashboard.css";
+import { apiFetch } from "../utils/api";
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
@@ -27,7 +28,7 @@ const AdminDashboard = () => {
   const fetchMessageCount = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch("http://localhost:5000/api/messages/count", {
+      const res = await apiFetch("/api/messages/count", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -42,7 +43,7 @@ const AdminDashboard = () => {
   const fetchReservationCount = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch("http://localhost:5000/api/reservations/count", {
+      const res = await apiFetch("/api/reservations/count", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -57,7 +58,7 @@ const AdminDashboard = () => {
   const fetchOrderCount = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch("http://localhost:5000/api/orders/count", {
+      const res = await apiFetch("/api/orders/count", {
         headers: {
           Authorization: `Bearer ${token}`,
         },

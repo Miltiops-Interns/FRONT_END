@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./AdminLogin.css";
 import Navbar from "../components/Navbar";
+import { apiFetch } from "../utils/api";
 
 const AdminLogin = () => {
   const [username, setUsername] = useState("");
@@ -13,7 +14,7 @@ const AdminLogin = () => {
     e.preventDefault();
 
     try {
-      const res = await fetch("http://localhost:5000/api/auth/login", {
+      const res = await apiFetch("/api/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

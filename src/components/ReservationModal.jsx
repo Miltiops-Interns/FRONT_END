@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { apiFetch } from "../utils/api";
 
 const ReservationModal = ({ isOpen, onClose }) => {
   const [formData, setFormData] = useState({
@@ -28,7 +29,7 @@ const ReservationModal = ({ isOpen, onClose }) => {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch("http://localhost:5000/api/reservations", {
+      const response = await apiFetch("/api/reservations", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -1,9 +1,11 @@
+import { apiFetch } from "./api";
+
 export const checkToken = async () => {
   const token = localStorage.getItem("token");
   if (!token) return false;
 
   try {
-    const res = await fetch("http://localhost:5000/api/auth/me", {
+    const res = await apiFetch("/api/auth/me", {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
