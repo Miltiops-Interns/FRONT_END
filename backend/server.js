@@ -37,6 +37,13 @@ mongoose
   .connect(effectiveMongoUri)
   .then(() => {
     console.log("MongoDB connected successfully");
+    const conn = mongoose.connection;
+    // Print non-sensitive DB connection details for observability
+    console.log(
+      `Mongo connection details → host=${conn.host} port=${
+        conn.port ?? "n/a"
+      } db=${conn.name}`
+    );
   })
   .catch((error) => {
     console.error("MongoDB connection error:", error);
