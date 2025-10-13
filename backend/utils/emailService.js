@@ -1,24 +1,28 @@
 const nodemailer = require('nodemailer');
 require('dotenv').config();
 
-// Create transporter with timeout settings
+// Create transporter with alternative SMTP settings
 const transporter = nodemailer.createTransport({
   host: process.env.EMAIL_HOST,
-  port: process.env.EMAIL_PORT,
-  secure: process.env.EMAIL_PORT == 465, // true for 465, false for other ports
+  port: 465, // Use port 465 for SSL
+  secure: true, // Use SSL
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS,
   },
-  // Add timeout and connection settings for Render
-  connectionTimeout: 60000, // 60 seconds
-  greetingTimeout: 30000,   // 30 seconds
-  socketTimeout: 60000,     // 60 seconds
-  pool: true,               // Use connection pooling
-  maxConnections: 5,        // Maximum connections
-  maxMessages: 100,         // Maximum messages per connection
-  rateDelta: 20000,         // Rate limiting
-  rateLimit: 5,             // Max 5 emails per rateDelta
+  // Aggressive timeout settings for Render free tier
+  connectionTimeout: 30000, // 30 seconds
+  greetingTimeout: 15000,   // 15 seconds
+  socketTimeout: 30000,     // 30 seconds
+  // Disable pooling for free tier
+  pool: false,
+  // Retry settings
+  retryDelay: 1000,
+  maxRetries: 3,
+  // TLS settings
+  tls: {
+    rejectUnauthorized: false
+  }
 });
 
 // Function to send notification email
