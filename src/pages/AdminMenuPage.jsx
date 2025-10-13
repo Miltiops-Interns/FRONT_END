@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./AdminMenuPage.css"; // Make sure this path is correct
 import { useNavigate } from "react-router-dom";
+import API_URL from "../config/api";
 
 const AdminMenuPage = () => {
   const [menuItems, setMenuItems] = useState([]);
@@ -18,7 +19,7 @@ const AdminMenuPage = () => {
   const token = localStorage.getItem("token");
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/menu")
+    fetch(`${API_URL}/api/menu`)
       .then((res) => res.json())
       .then((data) => setMenuItems(data));
   }, []);
@@ -27,7 +28,7 @@ const AdminMenuPage = () => {
     if (!newItem.name || !newItem.price)
       return alert("Name and price are required!");
     setLoading(true);
-    const res = await fetch("http://localhost:5000/api/menu", {
+    const res = await fetch(`${API_URL}/api/menu`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -49,7 +50,7 @@ const AdminMenuPage = () => {
   };
 
   const updateItem = async (id) => {
-    const res = await fetch(`http://localhost:5000/api/menu/${id}`, {
+    const res = await fetch(`${API_URL}/api/menu/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -66,7 +67,7 @@ const AdminMenuPage = () => {
 
   const deleteItem = async (id) => {
     if (!window.confirm("Are you sure you want to delete this item?")) return;
-    await fetch(`http://localhost:5000/api/menu/${id}`, {
+    await fetch(`${API_URL}/api/menu/${id}`, {
       method: "DELETE",
       headers: { Authorization: `Bearer ${token}` },
     });

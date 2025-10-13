@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 
 import "./App.css";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import API_URL from "./config/api";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import MenuPage from "./pages/MenuPage";
@@ -17,7 +18,7 @@ import ContactMessagesPage from "./pages/ContactMessagesPage";
 import CartPage from "./pages/CartPage";
 import { CartProvider } from "./context/CartContext";
 import AdminOrdersPage from "./pages/AdminOrdersPage";
-import {S1,S2,S3} from "./components/FoodScene";
+
 import FoodOrderIcon from "./components/FoodOrderIcon";
 import CookingPotIcon from "./components/CookingPotIcon";
 import DeliveryScooterIcon from "./components/DeliveryScooterIcon";
@@ -56,7 +57,7 @@ const HomePage = () => {
   useEffect(() => {
     const fetchReviews = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/reviews");
+        const response = await fetch(`${API_URL}/api/reviews`);
         const data = await response.json();
         setTestimonials(data);
       } catch (error) {

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import API_URL from "../config/api";
 
 const ContactPage = () => {
   // State for form fields
@@ -16,7 +17,7 @@ const ContactPage = () => {
     e.preventDefault();
     setStatus(null);
     try {
-      const res = await fetch("http://localhost:5000/api/contact", {
+      const res = await fetch(`${API_URL}/api/contact`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, email, phone, message }),
@@ -185,6 +186,7 @@ const ContactPage = () => {
             src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3396.8234567890123!2d76.9954564!3d30.8654167!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390f8f4547b07fcf%3A0x78e05b4fa2fb20f!2sHotel%20Saloni%20(RESTAURANT%20PUNJABI%20RASOI)!5e0!3m2!1sen!2sin!4v1692345678901!5m2!1sen!2sin"
             width="100%"
             height="450"
+            title="Location map of Punjabi Rasoi Hotel Saloni"
             style={{ border: 0 }}
             allowFullScreen=""
             loading="lazy"

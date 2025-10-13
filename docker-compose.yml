@@ -1,10 +1,15 @@
 services:
+  # MongoDB service (only needed if not using MongoDB Atlas)
+  # Comment this out if using MongoDB Atlas in production
   mongodb:
     image: public.ecr.aws/docker/library/mongo:7.0.14
     ports:
-      - "27017:27017"
+      - "27018:27017"
     volumes:
       - mongo_data:/data/db
+    # Uncomment the following if you need MongoDB only in development
+    # profiles:
+    #   - development
 
   backend:
     build:

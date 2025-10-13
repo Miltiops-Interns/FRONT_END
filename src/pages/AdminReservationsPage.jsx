@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./AdminReservationsPage.css";
 import { useNavigate } from "react-router-dom";
+import API_URL from "../config/api";
 
 const AdminReservationsPage = () => {
   const [reservations, setReservations] = useState([]);
@@ -10,7 +11,7 @@ const AdminReservationsPage = () => {
   useEffect(() => {
     const fetchReservations = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/reservations", {
+        const res = await fetch(`${API_URL}/api/reservations`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -30,7 +31,7 @@ const AdminReservationsPage = () => {
   const updateStatus = async (id, newStatus) => {
     try {
       const response = await fetch(
-        `http://localhost:5000/api/reservations/${id}`,
+        `${API_URL}/api/reservations/${id}`,
         {
           method: "PUT",
           headers: {
@@ -58,7 +59,7 @@ const AdminReservationsPage = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:5000/api/reservations/${id}`,
+        `${API_URL}/api/reservations/${id}`,
         {
           method: "DELETE",
           headers: {

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useCart } from "../context/CartContext";
 import { useNavigate } from "react-router-dom";
+import API_URL from "../config/api";
 
 const MenuSection = () => {
   const [selectedCategory, setSelectedCategory] = useState("");
@@ -11,7 +12,7 @@ const MenuSection = () => {
   useEffect(() => {
     const fetchMenu = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/menu");
+        const res = await fetch(`${API_URL}/api/menu`);
         const data = await res.json();
 
         const grouped = data.reduce((acc, item) => {

@@ -1,0 +1,30 @@
+# Render deployment configuration
+# This file helps Render understand how to deploy your application
+
+services:
+  # Backend Web Service
+  - type: web
+    name: hotel-backend
+    env: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    rootDir: ./backend
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 5000
+      # Add your environment variables in Render dashboard:
+      # MONGO_URI, JWT_SECRET, EMAIL_HOST, EMAIL_USER, EMAIL_PASS, ADMIN_EMAIL, FRONTEND_URL
+
+  # Frontend Static Site
+  - type: web
+    name: hotel-frontend
+    env: static
+    plan: free
+    buildCommand: npm install && npm run build
+    staticPublishPath: ./build
+    envVars:
+      # Add your environment variables in Render dashboard:
+      # REACT_APP_API_URL

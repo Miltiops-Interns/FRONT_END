@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./ContactMessagesPage.css";
 import { useNavigate } from "react-router-dom";
+import API_URL from "../config/api";
 
 const ContactMessagesPage = () => {
   const [messages, setMessages] = useState([]);
@@ -10,7 +11,7 @@ const ContactMessagesPage = () => {
   useEffect(() => {
     const fetchMessages = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/messages", {
+        const res = await fetch(`${API_URL}/api/messages`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -30,7 +31,7 @@ const ContactMessagesPage = () => {
   const deleteMessage = async (id) => {
     if (!window.confirm("Delete this message?")) return;
 
-    await fetch(`http://localhost:5000/api/messages/${id}`, {
+    await fetch(`${API_URL}/api/messages/${id}`, {
       method: "DELETE",
       headers: {
         Authorization: `Bearer ${token}`,

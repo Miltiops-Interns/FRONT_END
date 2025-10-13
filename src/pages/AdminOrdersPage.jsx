@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { checkToken } from "../utils/checkToken";
 import "./AdminOrdersPage.css";
+import API_URL from "../config/api";
 
 const AdminOrdersPage = () => {
   const navigate = useNavigate();
@@ -24,7 +25,7 @@ const AdminOrdersPage = () => {
   const fetchOrders = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch("http://localhost:5000/api/orders", {
+      const res = await fetch(`${API_URL}/api/orders`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
@@ -39,7 +40,7 @@ const AdminOrdersPage = () => {
   const updateStatus = async (id, status) => {
     try {
       const token = localStorage.getItem("token");
-      await fetch(`http://localhost:5000/api/orders/${id}`, {
+      await fetch(`${API_URL}/api/orders/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
