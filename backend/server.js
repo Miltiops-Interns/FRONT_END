@@ -101,17 +101,11 @@ app.use("/api/contact", contactRoutes);
 const messagesRoutes = require("./routes/messages");
 app.use("/api/messages", messagesRoutes);
 
-const reviewsRoutes = require("./routes/reviews");
-app.use("/api/reviews", reviewsRoutes);
-
 const reservationRoutes = require("./routes/reservations");
 app.use("/api/reservations", reservationRoutes);
 
 const orderRoutes = require("./routes/orders");
 app.use("/api/orders", orderRoutes);
-
-const emailDiagRoutes = require("./routes/emailDiagnostics");
-app.use("/api/_email", emailDiagRoutes);
 
 const verifyToken = require("./middleware/verifyToken");
 app.get("/api/secret", verifyToken, (req, res) => {
