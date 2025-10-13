@@ -1,49 +1,72 @@
-// Test script for email notifications
-// Run with: node testEmail.js
+// Email Test Script
+require('dotenv').config();
+const nodemailer = require('nodemailer');
 
-const { sendNotificationEmail } = require('./utils/emailService');
+console.log('🧪 Testing Email Configuration...');
+console.log('📧 Email Host:', process.env.EMAIL_HOST);
+console.log('📧 Email Port:', process.env.EMAIL_PORT);
+console.log('📧 Email User:', process.env.EMAIL_USER);
+console.log('📧 Admin Email:', process.env.ADMIN_EMAIL);
 
-async function testEmails() {
-  console.log('Testing email notifications...\n');
+// Create transporter
+const transporter = nodemailer.createTransport({
+  host: process.env.EMAIL_HOST,
+  port: process.env.EMAIL_PORT,
+  secure: process.env.EMAIL_PORT == 465, // true for 465, false for other ports
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+  },
+});
 
-  // Test contact message
-  console.log('1. Testing contact message notification...');
-  const contactResult = await sendNotificationEmail('contact', {
-    name: 'Test User',
-    email: 'test@example.com',
-    phone: '123-456-7890',
-    message: 'This is a test contact message from the admin.'
-  });
-  console.log('Contact result:', contactResult);
+// Test email configuration
+async function testEmail() {
+  try {
+    console.log('\n🔍 Verifying email configuration...');
+    await transporter.verify();
+    console.log('✅ Email configuration is valid!');
 
-  // Test reservation
-  console.log('\n2. Testing reservation notification...');
-  const reservationResult = await sendNotificationEmail('reservation', {
-    name: 'Test Customer',
-    email: 'customer@example.com',
-    phone: '987-654-3210',
-    date: new Date(),
-    time: '7:00 PM',
-    guests: 4,
-    specialRequests: 'Window seat please'
-  });
-  console.log('Reservation result:', reservationResult);
+    console.log('\n📤 Sending test email...');
+    const info = await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: process.env.ADMIN_EMAIL,
+      subject: '🧪 Hotel Website - Email Test',
+      html: `
+        <h2>🎉 Email Test Successful!</h2>
+        <p>This is a test email from your Hotel Website backend.</p>
+        <p><strong>Timestamp:</strong> ${new Date().toISOString()}</p>
+        <p><strong>From:</strong> ${process.env.EMAIL_USER}</p>
+        <p><strong>To:</strong> ${process.env.ADMIN_EMAIL}</p>
+        <hr>
+        <p><em>If you received this email, your SMTP configuration is working correctly!</em></p>
+      `,
+    });
 
-  // Test order
-  console.log('\n3. Testing order notification...');
-  const orderResult = await sendNotificationEmail('order', {
-    customerName: 'Test Buyer',
-    phone: '555-123-4567',
-    whatsapp: '555-123-4567',
-    items: [
-      { id: '1', name: 'Burger', price: 15.99, quantity: 2 },
-      { id: '2', name: 'Fries', price: 5.99, quantity: 1 }
-    ],
-    totalPrice: 37.97
-  });
-  console.log('Order result:', orderResult);
+    console.log('✅ Test email sent successfully!');
+    console.log('📧 Message ID:', info.messageId);
+    console.log('📧 Response:', info.response);
 
-  console.log('\nEmail testing completed. Check your admin email for notifications.');
+  } catch (error) {
+    console.error('❌ Email test failed:');
+    console.error('Error:', error.message);
+    
+    if (error.code) {
+      console.error('Error Code:', error.code);
+    }
+    
+    if (error.response) {
+      console.error('SMTP Response:', error.response);
+    }
+
+    // Common error solutions
+    console.log('\n🔧 Common Solutions:');
+    console.log('1. Check if 2-Step Verification is enabled in Gmail');
+    console.log('2. Generate a new App Password in Google Account');
+    console.log('3. Make sure EMAIL_PASS is the App Password (not your regular password)');
+    console.log('4. Verify EMAIL_USER is your full Gmail address');
+    console.log('5. Check if "Less secure app access" is enabled (if not using App Password)');
+  }
 }
 
-testEmails().catch(console.error);
+// Run the test
+testEmail();
