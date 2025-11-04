@@ -11,18 +11,32 @@ const AdminDashboard = () => {
   const [orderCount, setOrderCount] = useState(0);
 
   useEffect(() => {
+    let isMounted = true;
+
     const verify = async () => {
       const isValid = await checkToken();
+      if (!isMounted) return; // Prevent navigation if component unmounted
+      
       if (!isValid) {
         localStorage.removeItem("token");
         navigate("/admin/login");
+        return;
+      }
+      
+      // Only fetch if component is still mounted
+      if (isMounted) {
+        fetchMessageCount();
+        fetchReservationCount();
+        fetchOrderCount();
       }
     };
 
     verify();
-    fetchMessageCount();
-    fetchReservationCount();
-    fetchOrderCount();
+
+    // Cleanup function
+    return () => {
+      isMounted = false;
+    };
   }, [navigate]);
 
   const fetchMessageCount = async () => {

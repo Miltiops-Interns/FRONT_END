@@ -9,6 +9,8 @@ const ContactMessagesPage = () => {
   const token = localStorage.getItem("token");
 
   useEffect(() => {
+    let isMounted = true;
+
     const fetchMessages = async () => {
       try {
         const res = await apiFetch("/api/messages", {
@@ -17,16 +19,28 @@ const ContactMessagesPage = () => {
           },
         });
         const data = await res.json();
+        
+        if (!isMounted) return; // Prevent state update if component unmounted
+        
         setMessages(data);
       } catch (err) {
-        console.error("Error fetching messages:", err);
+        if (isMounted) {
+          console.error("Error fetching messages:", err);
+        }
       } finally {
-        setLoading(false);
+        if (isMounted) {
+          setLoading(false);
+        }
       }
     };
 
     fetchMessages();
-  }, []);
+
+    // Cleanup function
+    return () => {
+      isMounted = false;
+    };
+  }, [token]);
 
   const deleteMessage = async (id) => {
     if (!window.confirm("Delete this message?")) return;

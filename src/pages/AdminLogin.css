@@ -29,6 +29,22 @@
   border: none;
   border-radius: 0.5rem;
   cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.admin-login button:hover:not(:disabled) {
+  background: #333;
+  transform: translateY(-1px);
+}
+
+.admin-login button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.admin-login button:disabled:hover {
+  transform: none;
 }
 
 .admin-login .error {

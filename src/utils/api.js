@@ -9,8 +9,11 @@ const envBase =
 // Otherwise, for SSR/build tools, default to localhost
 const derivedBase = (() => {
   if (typeof window !== "undefined") {
+    // In browser: use current origin for development (localhost:3000)
+    // In production, REACT_APP_API_URL should be set
     return window.location.origin;
   }
+  // Server-side: default to localhost for development
   return "http://localhost:5000";
 })();
 

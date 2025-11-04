@@ -26,7 +26,7 @@ const Footer = () => {
               <i className="fab fa-facebook-f"></i>
             </motion.a>
             <motion.a
-              href="https://instagram.com"
+              href="https://www.instagram.com/hotel_saloni_/?igsh=MTlibXV5cXV5bXd1eg%3D%3D#"
               target="_blank"
               rel="noopener noreferrer"
               className="social-link"
@@ -73,7 +73,7 @@ const Footer = () => {
             <i className="fas fa-phone"></i> 09896532415
           </p>
           <p>
-            <i className="fas fa-envelope"></i> newi@punjabirasoi.com
+            <i className="fas fa-envelope"></i> punjabirasoikoti@gmail.com
           </p>
         </div>
 
@@ -95,7 +95,7 @@ const Footer = () => {
 
       <div className="footer-bottom">
         <p>
-          &copy; 2024 Punjabi Rasoi. All rights
+          &copy; 2025 Punjabi Rasoi. All rights 
           <Link to="/admin/login" className="footer-admin-link">
             {" "}
             reserved

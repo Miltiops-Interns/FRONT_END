@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import Loading from "./Loading";
 import { apiFetch } from "../utils/api";
 
 const ReservationModal = ({ isOpen, onClose }) => {
@@ -200,15 +201,15 @@ const ReservationModal = ({ isOpen, onClose }) => {
                 <motion.button
                   type="submit"
                   className="submit-button"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
+                  whileHover={!isSubmitting ? { scale: 1.05 } : {}}
+                  whileTap={!isSubmitting ? { scale: 0.95 } : {}}
                   disabled={isSubmitting}
                 >
                   {isSubmitting ? (
-                    <>
-                      <i className="fas fa-spinner fa-spin"></i>
-                      Processing...
-                    </>
+                    <span style={{ display: "flex", alignItems: "center", gap: "0.5rem", justifyContent: "center" }}>
+                      <Loading type="food" size="small" />
+                      <span>Processing...</span>
+                    </span>
                   ) : (
                     "Confirm Reservation"
                   )}

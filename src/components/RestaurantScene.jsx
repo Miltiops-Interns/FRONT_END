@@ -130,7 +130,7 @@ const RestaurantScene = () => {
         className={`scene-container ${isVisible ? "visible" : ""}`}
       >
         <div className="scene-content">
-          <h2>Experience Our Mountain View Saloni</h2>
+          <h2>Experience the Ambience of Punjabi Rasoi</h2>
           <p>
             Take a virtual tour of our elegant Hotel in Koti, Himachal Pradesh
           </p>
@@ -161,12 +161,12 @@ const RestaurantScene = () => {
           <div className={`feature ${isVisible ? "visible" : ""}`}>
             <i className="fas fa-mountain"></i>
             <h3>Panoramic Mountain Views</h3>
-            <p>Breathtaking views of the Himalayan ranges from our salon</p>
+            <p>Experience the authentic flavors of Punjab in a warm and inviting atmosphere.</p>
           </div>
           <div className={`feature ${isVisible ? "visible" : ""}`}>
             <i className="fas fa-glass-cheers"></i>
             <h3>Elegant Interior</h3>
-            <p>Luxuriously designed space with modern amenities</p>
+            <p>Experience the warm and inviting atmosphere of Punjabi Rasoi.</p>
           </div>
           <div className={`feature ${isVisible ? "visible" : ""}`}>
             <i className="fas fa-spa"></i>

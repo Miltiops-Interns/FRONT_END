@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { apiFetch } from "./utils/api";
+import { motion } from "framer-motion";
 
 import "./App.css";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import Loading from "./components/Loading";
 import MenuPage from "./pages/MenuPage";
 import ContactPage from "./pages/ContactPage";
 import RestaurantScene from "./components/RestaurantScene";
@@ -18,7 +18,9 @@ import ContactMessagesPage from "./pages/ContactMessagesPage";
 import CartPage from "./pages/CartPage";
 import { CartProvider } from "./context/CartContext";
 import AdminOrdersPage from "./pages/AdminOrdersPage";
-import { S1, S2, S3 } from "./components/FoodScene";
+import ErrorBoundary from "./components/ErrorBoundary";
+import ScrollToTop from "./components/ScrollToTop";
+
 import FoodOrderIcon from "./components/FoodOrderIcon";
 import CookingPotIcon from "./components/CookingPotIcon";
 import DeliveryScooterIcon from "./components/DeliveryScooterIcon";
@@ -65,48 +67,32 @@ const HomePage = () => {
     },
   ];
 
-  // Fetch reviews from backend
+  // Use static reviews (no API call needed)
   useEffect(() => {
-    const fetchReviews = async () => {
-      try {
-        const response = await apiFetch("/api/reviews");
-        const data = await response.json();
-        setTestimonials(data);
-      } catch (error) {
-        console.error("Error fetching reviews:", error);
-        // Fallback to static reviews if API fails
-        setTestimonials([
-          {
-            name: "Sarah Johnson",
-            comment:
-              "The best Punjabi food I've ever had! The butter chicken is to die for.",
-            rating: 5,
-            image:
-              "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
-          },
-          {
-            name: "Michael Chen",
-            comment:
-              "Authentic flavors and amazing service. A must-visit restaurant!",
-            rating: 5,
-            image:
-              "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
-          },
-          {
-            name: "Priya Patel",
-            comment:
-              "Feels like home! The spices and aromas are exactly like my grandmother's cooking.",
-            rating: 5,
-            image:
-              "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
-          },
-        ]);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchReviews();
+    setTestimonials([
+      {
+        name: "Divya",
+        comment:
+          "The best Punjabi food I've ever had! The butter chicken is to die for.",
+        rating: 5,
+        image: "/images/divya.jpg",
+      },
+      {
+        name: "Abhinav Arya",
+        comment:
+          "Authentic flavors and amazing service. A must-visit restaurant!",
+        rating: 5,
+        image: "/images/abhi.jpg",
+      },
+      {
+        name: "Sonia Dhiman",
+        comment:
+          "Feels like home! The spices and aromas are exactly like my grandmother's cooking.",
+        rating: 5,
+        image: "/images/sonia.jpg",
+      },
+    ]);
+    setLoading(false);
   }, []);
 
   return (
@@ -213,30 +199,9 @@ const HomePage = () => {
         <div className="testimonials-container">
           {loading ? (
             // Loading state
-            <motion.div
-              className="loading-container"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                minHeight: "200px",
-                width: "100%",
-              }}
-            >
-              <motion.div
-                animate={{ rotate: 360 }}
-                transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                style={{
-                  width: "40px",
-                  height: "40px",
-                  border: "4px solid #f3f3f3",
-                  borderTop: "4px solid #FF6B35",
-                  borderRadius: "50%",
-                }}
-              />
-            </motion.div>
+            <div className="page-loading">
+              <Loading type="food" size="medium" message="Loading reviews..." />
+            </div>
           ) : testimonials.length > 0 ? (
             // Reviews loaded successfully
             testimonials.map((testimonial, index) => (
@@ -302,7 +267,7 @@ const HomePage = () => {
           transition={{ duration: 0.6 }}
         >
           <h2>Ready to Experience Authentic Punjabi Cuisine?</h2>
-          <p>Join us for an unforgettable dining experience</p>
+          <p>Join us for a culinary journey through Punjab's rich heritage.</p>
           <div className="cta-buttons">
             <Link to="/menu">
               <motion.button
@@ -338,25 +303,28 @@ const HomePage = () => {
 // Main App Component
 function App() {
   return (
-    <CartProvider>
-      <Router>
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/menu" element={<MenuPage />} />
-          <Route path="/cart" element={<CartPage />} />
-          <Route path="/contact" element={<ContactPage />} />
-          <Route path="/admin/login" element={<AdminLogin />} />
-          <Route path="/admin/dashboard" element={<AdminDashboard />} />
-          <Route path="/admin/menu" element={<AdminMenuPage />} />
-          <Route
-            path="/admin/reservations"
-            element={<AdminReservationsPage />}
-          />
-          <Route path="/admin/contact" element={<ContactMessagesPage />} />
-          <Route path="/admin/orders" element={<AdminOrdersPage />} />
-        </Routes>
-      </Router>
-    </CartProvider>
+    <ErrorBoundary>
+      <CartProvider>
+        <Router>
+          <ScrollToTop />
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/menu" element={<MenuPage />} />
+            <Route path="/cart" element={<CartPage />} />
+            <Route path="/contact" element={<ContactPage />} />
+            <Route path="/admin/login" element={<AdminLogin />} />
+            <Route path="/admin/dashboard" element={<AdminDashboard />} />
+            <Route path="/admin/menu" element={<AdminMenuPage />} />
+            <Route
+              path="/admin/reservations"
+              element={<AdminReservationsPage />}
+            />
+            <Route path="/admin/contact" element={<ContactMessagesPage />} />
+            <Route path="/admin/orders" element={<AdminOrdersPage />} />
+          </Routes>
+        </Router>
+      </CartProvider>
+    </ErrorBoundary>
   );
 }
 

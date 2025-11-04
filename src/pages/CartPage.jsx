@@ -1,7 +1,8 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import Loading from "../components/Loading";
 import { useCart } from "../context/CartContext";
 import { Link, useNavigate } from "react-router-dom";
 import "./CartPage.css";
@@ -27,13 +28,17 @@ const CartPage = () => {
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [customerName, setCustomerName] = useState("");
   const [phone, setPhone] = useState("");
-  const [whatsapp, setWhatsapp] = useState("");
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   useEffect(() => {
+    let isMounted = true;
+    
     const fetchMenu = async () => {
       try {
         const res = await apiFetch("/api/menu");
         const data = await res.json();
+
+        if (!isMounted) return; // Prevent state update if component unmounted
 
         const grouped = data.reduce((acc, item) => {
           const cat = item.category || "Others";
@@ -50,11 +55,18 @@ const CartPage = () => {
         setMenuData(formatted);
         if (formatted.length > 0) setSelectedCategory(formatted[0].category);
       } catch (e) {
-        console.error("Failed to fetch menu for cart page:", e);
+        if (isMounted) {
+          console.error("Failed to fetch menu for cart page:", e);
+        }
       }
     };
 
     fetchMenu();
+
+    // Cleanup function
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const flatMenuForSelectedCategory = useMemo(() => {
@@ -66,12 +78,15 @@ const CartPage = () => {
     setIsCheckoutOpen(true);
   };
 
+  const [isSubmittingOrder, setIsSubmittingOrder] = useState(false);
+
   const submitOrder = async (e) => {
     e.preventDefault();
     if (!customerName || !phone) {
       alert("Please enter your name and phone number");
       return;
     }
+    setIsSubmittingOrder(true);
     try {
       const res = await apiFetch("/api/orders", {
         method: "POST",
@@ -79,19 +94,25 @@ const CartPage = () => {
         body: JSON.stringify({
           customerName,
           phone,
-          whatsapp,
+          whatsapp: phone, // Use phone number for WhatsApp tracking
           items,
           totalPrice,
         }),
       });
       if (!res.ok) throw new Error("Failed to submit order");
       setIsCheckoutOpen(false);
-      alert("Order submitted successfully!");
+      setShowSuccessModal(true);
       clearCart();
-      navigate("/");
+      // Auto-close modal and navigate after 3 seconds
+      setTimeout(() => {
+        setShowSuccessModal(false);
+        navigate("/");
+      }, 3000);
     } catch (err) {
       console.error(err);
       alert("Something went wrong while submitting your order.");
+    } finally {
+      setIsSubmittingOrder(false);
     }
   };
 
@@ -156,7 +177,7 @@ const CartPage = () => {
                 >
                   <img
                     src={
-                      item.image || "https://via.placeholder.com/80?text=Item"
+                      item.image || "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Crect width='80' height='80' fill='%23f0f0f0'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial' font-size='12' fill='%23999'%3EItem%3C/text%3E%3C/svg%3E"
                     }
                     alt={item.name}
                     style={{
@@ -296,7 +317,7 @@ const CartPage = () => {
                   <img
                     src={
                       mi.image ||
-                      "https://via.placeholder.com/300x180?text=Item"
+                      "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='180'%3E%3Crect width='300' height='180' fill='%23f0f0f0'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial' font-size='14' fill='%23999'%3EItem%3C/text%3E%3C/svg%3E"
                     }
                     alt={mi.name}
                     style={{
@@ -359,23 +380,16 @@ const CartPage = () => {
                 />
               </div>
               <div className="form-field">
-                <label className="form-label">Phone</label>
+                <label className="form-label">
+                  Phone <span style={{ color: "#666", fontSize: "0.9rem", fontWeight: "normal" }}>(WhatsApp for tracking)</span>
+                </label>
                 <input
                   className="text-input"
                   type="tel"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
+                  placeholder="Phone/WhatsApp number"
                   required
-                />
-              </div>
-              <div className="form-field">
-                <label className="form-label">WhatsApp (optional)</label>
-                <input
-                  className="text-input"
-                  type="tel"
-                  value={whatsapp}
-                  onChange={(e) => setWhatsapp(e.target.value)}
-                  placeholder="WhatsApp number"
                 />
               </div>
               <div className="order-total-row">
@@ -390,14 +404,69 @@ const CartPage = () => {
                 >
                   Cancel
                 </button>
-                <button type="submit" className="checkout-btn">
-                  Submit Order
+                <button 
+                  type="submit" 
+                  className="checkout-btn"
+                  disabled={isSubmittingOrder}
+                >
+                  {isSubmittingOrder ? (
+                    <span style={{ display: "flex", alignItems: "center", gap: "0.5rem", justifyContent: "center" }}>
+                      <Loading type="food" size="small" />
+                      <span>Submitting...</span>
+                    </span>
+                  ) : (
+                    "Submit Order"
+                  )}
                 </button>
               </div>
             </form>
           </div>
         </div>
       )}
+
+      {/* Success Modal Popup */}
+      <AnimatePresence>
+        {showSuccessModal && (
+          <motion.div
+            className="modal-overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => {
+              setShowSuccessModal(false);
+              navigate("/");
+            }}
+          >
+            <motion.div
+              className="modal-content contact-success-modal"
+              initial={{ opacity: 0, scale: 0.8, y: 50 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.8, y: 50 }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button
+                className="close-button"
+                onClick={() => {
+                  setShowSuccessModal(false);
+                  navigate("/");
+                }}
+              >
+                ×
+              </button>
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.1 }}
+                className="success-message"
+              >
+                <i className="fas fa-check-circle"></i>
+                <h3>Order Submitted Successfully!</h3>
+                <p>Thank you for your order. We'll prepare your delicious meal and contact you soon!</p>
+              </motion.div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <Footer />
     </div>

@@ -3,17 +3,25 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useCart } from "../context/CartContext";
 import { useNavigate } from "react-router-dom";
 import { apiFetch } from "../utils/api";
+import Loading from "./Loading";
 
 const MenuSection = () => {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [menuItems, setMenuItems] = useState([]);
   const [hoveredItem, setHoveredItem] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [buttonHovered, setButtonHovered] = useState(null);
 
   useEffect(() => {
+    let isMounted = true;
+
     const fetchMenu = async () => {
       try {
+        setLoading(true);
         const res = await apiFetch("/api/menu");
         const data = await res.json();
+
+        if (!isMounted) return; // Prevent state update if component unmounted
 
         const grouped = data.reduce((acc, item) => {
           const cat = item.category;
@@ -33,11 +41,22 @@ const MenuSection = () => {
           setSelectedCategory(formatted[0].category);
         }
       } catch (err) {
-        console.error("Failed to fetch menu:", err);
+        if (isMounted) {
+          console.error("Failed to fetch menu:", err);
+        }
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
       }
     };
 
     fetchMenu();
+
+    // Cleanup function
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const menuVariants = {
@@ -62,10 +81,10 @@ const MenuSection = () => {
       },
     },
     hover: {
-      scale: 1.05,
-      rotateY: 10,
+      scale: 1.02,
+      rotateY: 5,
       transition: {
-        duration: 0.3,
+        duration: 0.2,
       },
     },
   };
@@ -83,6 +102,33 @@ const MenuSection = () => {
     });
     navigate("/cart");
   };
+
+  if (loading) {
+    return (
+      <section className="menu-section">
+        <div className="menu-container">
+          <div className="menu-loading-wrapper">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              className="menu-loading-content"
+            >
+              <Loading type="dots" size="large" message="Preparing our delicious menu..." />
+              <motion.p
+                className="menu-loading-subtitle"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.3, duration: 0.6 }}
+              >
+                Please wait while we fetch the best dishes for you
+              </motion.p>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="menu-section">
@@ -138,17 +184,22 @@ const MenuSection = () => {
                     {category.items.map((item) => (
                       <motion.div
                         key={item._id}
-                        className="menu-item"
+                        className={`menu-item ${buttonHovered === item._id ? 'button-hovered' : ''}`}
                         variants={itemVariants}
-                        whileHover="hover"
-                        onHoverStart={() => setHoveredItem(item.name)}
+                        whileHover={buttonHovered === item._id ? {} : "hover"}
+                        onHoverStart={(e) => {
+                          // Don't trigger hover if hovering over button
+                          if (!e.target.closest('.order-btn')) {
+                            setHoveredItem(item.name);
+                          }
+                        }}
                         onHoverEnd={() => setHoveredItem(null)}
                       >
                         <div className="menu-item-image">
                           <img
                             src={
                               item.image ||
-                              "https://via.placeholder.com/150?text=No+Image"
+                              "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='150'%3E%3Crect width='150' height='150' fill='%23f0f0f0'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial' font-size='14' fill='%23999'%3ENo Image%3C/text%3E%3C/svg%3E"
                             }
                             alt={item.name}
                           />
@@ -178,7 +229,20 @@ const MenuSection = () => {
                               backgroundColor: "#FF6347",
                             }}
                             whileTap={{ scale: 0.95 }}
-                            onClick={() => handleAddToCart(item)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleAddToCart(item);
+                            }}
+                            onMouseEnter={(e) => {
+                              e.stopPropagation();
+                              // Disable menu item hover animation when hovering button
+                              setButtonHovered(item._id);
+                            }}
+                            onMouseLeave={(e) => {
+                              e.stopPropagation();
+                              setButtonHovered(null);
+                            }}
+                            style={{ position: 'relative', zIndex: 100 }}
                           >
                             Add to Order
                           </motion.button>

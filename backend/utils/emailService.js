@@ -1,22 +1,65 @@
-const nodemailer = require('nodemailer');
-require('dotenv').config();
+const { Resend } = require("resend");
+const path = require("path");
 
-// Create transporter
-const transporter = nodemailer.createTransport({
-  host: process.env.EMAIL_HOST,
-  port: process.env.EMAIL_PORT,
-  secure: process.env.EMAIL_PORT == 465, // true for 465, false for other ports
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-});
+// Try to load .env from multiple locations
+try {
+  // Try backend/.env first (relative to this file)
+  require("dotenv").config({ path: path.join(__dirname, "..", ".env") });
+} catch (err) {
+  // Fall back to root .env or default dotenv behavior
+  require("dotenv").config();
+}
+
+// Email debug toggle (enable verbose logging in production only when needed)
+const EMAIL_DEBUG =
+  String(process.env.DEBUG_EMAIL || "").toLowerCase() === "true";
+
+// 🔍 COMPREHENSIVE ENVIRONMENT VARIABLE LOGGING
+console.log("🔍 [Resend Email] Environment Variables Check:");
+console.log("  RESEND_API_KEY:", process.env.RESEND_API_KEY ? "[SET]" : "[MISSING - REQUIRED]");
+console.log("  ADMIN_EMAIL:", process.env.ADMIN_EMAIL || "[MISSING]");
+console.log("  EMAIL_FROM:", process.env.EMAIL_FROM || "[MISSING]");
+console.log("  DEBUG_EMAIL:", process.env.DEBUG_EMAIL || "[NOT SET]");
+console.log("  NODE_ENV:", process.env.NODE_ENV || "[NOT SET]");
+
+// Initialize Resend client function (callable multiple times)
+const initializeResend = () => {
+  // Reload environment variables to ensure we have the latest values
+  require("dotenv").config();
+  
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey || typeof apiKey !== 'string' || !apiKey.startsWith('re_')) {
+    console.error("❌ [Resend Email] RESEND_API_KEY is required but not set or invalid!");
+    console.error("❌ [Resend Email] Current value:", apiKey ? `${apiKey.substring(0, 10)}...` : "[UNDEFINED]");
+    console.error("❌ [Resend Email] Please add RESEND_API_KEY=re_... to your .env file");
+    return null;
+  }
+  return new Resend(apiKey);
+};
+
+// Initialize Resend client at module load
+let resend = initializeResend();
+if (resend) {
+  console.log("✅ [Resend Email] Client initialized successfully");
+}
 
 // Function to send notification email
 const sendNotificationEmail = async (type, data) => {
   try {
-    let subject = '';
-    let html = '';
+    // Re-check and re-initialize if needed (in case env vars were loaded later)
+    if (!resend) {
+      resend = initializeResend();
+      if (!resend) {
+        throw new Error("RESEND_API_KEY is required for sending emails. Please check your .env file.");
+      }
+    }
+
+    console.log("🔍 [Resend Email] Send attempt started:");
+    console.log("  Type:", type);
+    console.log("  To:", process.env.ADMIN_EMAIL);
+    console.log("  Data keys:", Object.keys(data || {}));
+    let subject = "";
+    let html = "";
 
     // Simple and Attractive Email Template
     const createEmailTemplate = (title, content, typeColor, icon) => `
@@ -223,10 +266,10 @@ const sendNotificationEmail = async (type, data) => {
     `;
 
     switch (type) {
-      case 'contact':
-        subject = '🍽️ New Contact Message - Restaurant Admin Alert';
+      case "contact":
+        subject = "🍽️ New Contact Message - Restaurant Admin Alert";
         html = createEmailTemplate(
-          'New Contact Message',
+          "New Contact Message",
           `
             <h2 style="color: #374151; margin-bottom: 24px; text-align: center;">📬 New Contact Message Received</h2>
             <div class="info-grid">
@@ -248,24 +291,26 @@ const sendNotificationEmail = async (type, data) => {
                 <span class="info-icon">📞</span>
                 <div class="info-content">
                   <div class="label">Phone</div>
-                  <div class="value">${data.phone || 'Not provided'}</div>
+                  <div class="value">${data.phone || "Not provided"}</div>
                 </div>
               </div>
             </div>
             <div class="message-section">
               <div class="label">💬 Message</div>
-              <div style="margin-top: 12px; white-space: pre-wrap; color: #111827;">${data.message}</div>
+              <div style="margin-top: 12px; white-space: pre-wrap; color: #111827;">${
+                data.message
+              }</div>
             </div>
           `,
-          '#0ea5e9',
-          '💬'
+          "#0ea5e9",
+          "💬"
         );
         break;
 
-      case 'reservation':
-        subject = '🍽️ New Reservation Request - Restaurant Admin Alert';
+      case "reservation":
+        subject = "🍽️ New Reservation Request - Restaurant Admin Alert";
         html = createEmailTemplate(
-          'New Reservation',
+          "New Reservation",
           `
             <h2 style="color: #374151; margin-bottom: 24px; text-align: center;">📅 New Reservation Request</h2>
             <div class="info-grid">
@@ -294,7 +339,9 @@ const sendNotificationEmail = async (type, data) => {
                 <span class="info-icon">📅</span>
                 <div class="info-content">
                   <div class="label">Date</div>
-                  <div class="value">${new Date(data.date).toLocaleDateString()}</div>
+                  <div class="value">${new Date(
+                    data.date
+                  ).toLocaleDateString()}</div>
                 </div>
               </div>
               <div class="info-item">
@@ -312,21 +359,27 @@ const sendNotificationEmail = async (type, data) => {
                 </div>
               </div>
             </div>
-            ${data.specialRequests ? `
+            ${
+              data.specialRequests
+                ? `
             <div class="message-section">
               <div class="label">🎯 Special Requests</div>
               <div style="margin-top: 12px; color: #111827;">${data.specialRequests}</div>
             </div>
-            ` : ''}
+            `
+                : ""
+            }
           `,
-          '#10b981',
-          '📅'
+          "#10b981",
+          "📅"
         );
         break;
 
-      case 'order':
-        subject = '🍽️ New Order Received - Restaurant Admin Alert';
-        const itemsList = data.items.map(item => `
+      case "order":
+        subject = "🍽️ New Order Received - Restaurant Admin Alert";
+        const itemsList = data.items
+          .map(
+            (item) => `
           <div class="order-item">
             <div>
               <span class="item-name">${item.name}</span>
@@ -334,10 +387,12 @@ const sendNotificationEmail = async (type, data) => {
             </div>
             <span class="item-price">₹${item.price * item.quantity}</span>
           </div>
-        `).join('');
+        `
+          )
+          .join("");
 
         html = createEmailTemplate(
-          'New Order',
+          "New Order",
           `
             <h2 style="color: #374151; margin-bottom: 24px; text-align: center;">🛒 New Order Received</h2>
             <div class="info-grid">
@@ -359,7 +414,7 @@ const sendNotificationEmail = async (type, data) => {
                 <span class="info-icon">💬</span>
                 <div class="info-content">
                   <div class="label">WhatsApp</div>
-                  <div class="value">${data.whatsapp || 'Not provided'}</div>
+                  <div class="value">${data.whatsapp || "Not provided"}</div>
                 </div>
               </div>
             </div>
@@ -371,28 +426,99 @@ const sendNotificationEmail = async (type, data) => {
               </div>
             </div>
           `,
-          '#ef4444',
-          '🛒'
+          "#ef4444",
+          "🛒"
         );
         break;
 
       default:
-        throw new Error('Unknown notification type');
+        throw new Error("Unknown notification type");
     }
 
-    const mailOptions = {
-      from: process.env.EMAIL_USER,
-      to: process.env.ADMIN_EMAIL,
-      subject: subject,
-      html: html,
-    };
-
-    const info = await transporter.sendMail(mailOptions);
-    console.log('Notification email sent:', info.messageId);
-    return { success: true, messageId: info.messageId };
+    // Send using Resend API
+    let senderEmail = process.env.EMAIL_FROM || process.env.ADMIN_EMAIL;
+    const toEmail = process.env.ADMIN_EMAIL;
+    
+    // Remove display name format - Resend requires plain email without display name
+    // unless domain is verified. Extract just the email if display name is present.
+    if (senderEmail.includes('<') && senderEmail.includes('>')) {
+      const match = senderEmail.match(/<([^>]+)>/);
+      if (match) {
+        senderEmail = match[1]; // Extract email from "Name <email>"
+      }
+    }
+    
+    console.log("🔍 [Resend API] Attempting to send email...");
+    console.log("  From:", senderEmail);
+    console.log("  To:", toEmail);
+    console.log("  Subject:", subject);
+    console.log("  HTML length:", html.length, "characters");
+    
+    try {
+      const response = await resend.emails.send({
+        from: senderEmail,
+        to: toEmail,
+        subject: subject,
+        html: html,
+      });
+      
+      // Resend returns { data, error } structure
+      if (response.error) {
+        console.error("❌ [Resend API] Error in response:", response.error);
+        throw new Error(response.error.message || JSON.stringify(response.error));
+      }
+      
+      if (!response.data || !response.data.id) {
+        console.error("❌ [Resend API] No data or ID in response:", response);
+        throw new Error("Resend API returned invalid response");
+      }
+      
+      console.log("✅ [Resend API] Send success:");
+      console.log("  Message ID:", response.data.id);
+      return { success: true, messageId: response.data.id };
+    } catch (resendError) {
+      // If it's already an Error object, rethrow it
+      if (resendError instanceof Error) {
+        throw resendError;
+      }
+      // Otherwise, wrap it
+      throw new Error(resendError?.message || String(resendError));
+    }
   } catch (error) {
-    console.error('Error sending notification email:', error);
-    return { success: false, error: error.message };
+    console.error("❌ [Email] Send error occurred:");
+    console.error(
+      "  Error message:",
+      error && error.message ? error.message : "Unknown error"
+    );
+    console.error("  Error code:", error && error.code ? error.code : "N/A");
+    console.error("  Full error object:", error);
+
+    // 🔍 SPECIFIC ERROR DETECTION
+    let errorMessage = error.message || "Unknown error";
+    
+    // Log full error details for debugging
+    if (EMAIL_DEBUG) {
+      console.error("  Full error:", JSON.stringify(error, null, 2));
+    }
+    
+    if (error.message && error.message.includes("Invalid API key")) {
+      console.error("🚨 [Resend] API key is invalid");
+      errorMessage = "Invalid API key - check RESEND_API_KEY in .env";
+    }
+    if (error.message && error.message.includes("Unauthorized")) {
+      console.error("🚨 [Resend] API key is invalid or unauthorized");
+      errorMessage = "Unauthorized - check RESEND_API_KEY in .env";
+    }
+    if (error.message && error.message.includes("Domain") || error.message.includes("not verified")) {
+      console.error("🚨 [Resend] Domain issue - check sender email is verified");
+      errorMessage = "Domain not verified - check EMAIL_FROM domain in Resend dashboard";
+    }
+    if (error.message && error.message.includes("testing emails")) {
+      console.error("🚨 [Resend] Can only send to account owner email without domain verification");
+      errorMessage = "Can only send to account owner email without domain verification";
+    }
+
+    return { success: false, error: errorMessage };
   }
 };
 

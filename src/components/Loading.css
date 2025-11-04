@@ -1,0 +1,208 @@
+/* Loading Component Styles */
+
+.loading-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.loading-fullscreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(5px);
+}
+
+.loading-fullscreen.loading-overlay {
+  background: rgba(0, 0, 0, 0.7);
+}
+
+.loading-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+}
+
+/* Three Dots Animation */
+.loading-dots {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.loading-dot {
+  background: var(--secondary-color, #FF6B35);
+  border-radius: 50%;
+  width: 12px;
+  height: 12px;
+}
+
+.loading-dots.loading-small .loading-dot {
+  width: 8px;
+  height: 8px;
+  gap: 0.3rem;
+}
+
+.loading-dots.loading-medium .loading-dot {
+  width: 12px;
+  height: 12px;
+  gap: 0.5rem;
+}
+
+.loading-dots.loading-large .loading-dot {
+  width: 16px;
+  height: 16px;
+  gap: 0.7rem;
+}
+
+/* Food-themed Animation */
+.loading-food {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.loading-food.loading-small {
+  width: 50px;
+  height: 50px;
+}
+
+.loading-food.loading-medium {
+  width: 80px;
+  height: 80px;
+}
+
+.loading-food.loading-large {
+  width: 120px;
+  height: 120px;
+}
+
+.food-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.food-plate {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60%;
+  height: 60%;
+  background: linear-gradient(135deg, #FF6B35 0%, #F7931E 100%);
+  border-radius: 50%;
+  box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
+}
+
+.loading-food.loading-small .food-plate {
+  width: 50%;
+  height: 50%;
+}
+
+.loading-food.loading-large .food-plate {
+  width: 70%;
+  height: 70%;
+}
+
+.food-steam {
+  position: absolute;
+  bottom: 60%;
+  width: 4px;
+  height: 30px;
+  background: linear-gradient(to top, rgba(200, 200, 200, 0.7), transparent);
+  border-radius: 2px;
+}
+
+.loading-food.loading-small .food-steam {
+  height: 20px;
+  width: 3px;
+  bottom: 55%;
+}
+
+.loading-food.loading-large .food-steam {
+  height: 40px;
+  width: 5px;
+  bottom: 65%;
+}
+
+.loading-message {
+  margin: 0;
+  color: var(--text-dark, #333);
+  font-size: 1rem;
+  font-weight: 500;
+  text-align: center;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.loading-fullscreen.loading-overlay .loading-message {
+  color: #fff;
+}
+
+.loading-message.loading-small {
+  font-size: 0.875rem;
+}
+
+.loading-message.loading-large {
+  font-size: 1.25rem;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+/* Button loading state */
+.button-loading {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: wait;
+  opacity: 0.7;
+}
+
+.button-loading .loading-dots {
+  gap: 0.3rem;
+}
+
+.button-loading .loading-dot {
+  width: 6px;
+  height: 6px;
+  background: currentColor;
+}
+
+/* Inline loading (for forms) */
+.inline-loading {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-left: 0.5rem;
+}
+
+/* Page loading */
+.page-loading {
+  min-height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

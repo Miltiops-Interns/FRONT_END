@@ -4,6 +4,22 @@
   min-height: 100vh;
 }
 
+.dashboard-btn {
+  margin-bottom: 20px;
+  background-color: #c5311d;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 15px;
+  transition: background 0.3s ease;
+}
+
+.dashboard-btn:hover {
+  background-color: #d88d1d;
+}
+
 .orders-header {
   background: white;
   padding: 24px;

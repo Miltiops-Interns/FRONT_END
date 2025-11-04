@@ -10,16 +10,29 @@ const AdminOrdersPage = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let isMounted = true;
+
     const init = async () => {
       const isValid = await checkToken();
+      if (!isMounted) return; // Prevent navigation if component unmounted
+      
       if (!isValid) {
         localStorage.removeItem("token");
         navigate("/admin/login");
         return;
       }
-      fetchOrders();
+      
+      if (isMounted) {
+        fetchOrders();
+      }
     };
+    
     init();
+
+    // Cleanup function
+    return () => {
+      isMounted = false;
+    };
   }, [navigate]);
 
   const fetchOrders = async () => {
@@ -65,25 +78,26 @@ const AdminOrdersPage = () => {
       )
       .join("\n");
 
-    const message = `Hi ${customerName}! 👋
+    // Use simple emojis - using ASCII-safe alternatives that work better with WhatsApp
+    // Using simple symbols that encode properly in URLs
+    const message = `Hi ${customerName}! 
 
 Your order has been received and is being processed.
 
-📋 Order Details:
+Order Details:
 ${itemsText}
 
-💰 Total: ₹${totalPrice.toFixed(2)}
+Total: ₹${totalPrice.toFixed(2)}
 
-We'll keep you updated on your order status. Thank you for choosing Punjabi Rasoi! 🍽️`;
-
+We'll keep you updated on your order status. Thank you for choosing Punjabi Rasoi!`;
+    
     // Encode message for WhatsApp URL
+    // Use encodeURIComponent which properly encodes UTF-8 characters
     const encodedMessage = encodeURIComponent(message);
-
-    // Generate WhatsApp URL (works on both mobile and desktop)
-    const whatsappUrl = `https://wa.me/${phone.replace(
-      /\D/g,
-      ""
-    )}?text=${encodedMessage}`;
+    
+    // Generate WhatsApp URL using api.whatsapp.com (better emoji support than wa.me)
+    const cleanPhone = phone.replace(/\D/g, "");
+    const whatsappUrl = `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodedMessage}`;
 
     // Open WhatsApp
     window.open(whatsappUrl, "_blank");
@@ -101,6 +115,12 @@ We'll keep you updated on your order status. Thank you for choosing Punjabi Raso
 
   return (
     <div className="admin-orders-page">
+      <button
+        onClick={() => navigate("/admin/dashboard")}
+        className="dashboard-btn"
+      >
+        🏠 Back to Dashboard
+      </button>
       <div className="orders-header">
         <h2>Orders Management</h2>
         <p>View and manage customer orders</p>
