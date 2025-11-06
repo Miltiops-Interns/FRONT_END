@@ -106,8 +106,9 @@ const RestaurantScene = () => {
       { threshold: 0.1 }
     );
 
-    if (containerRef.current) {
-      observer.observe(containerRef.current);
+    const container = containerRef.current;
+    if (container) {
+      observer.observe(container);
     }
 
     // Simulate loading time
@@ -116,8 +117,8 @@ const RestaurantScene = () => {
     }, 2000);
 
     return () => {
-      if (containerRef.current) {
-        observer.unobserve(containerRef.current);
+      if (container) {
+        observer.unobserve(container);
       }
       clearTimeout(timer);
     };
