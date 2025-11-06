@@ -133,17 +133,39 @@
 }
 
 .order-total {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
   margin: 16px 0;
   padding: 16px 0;
   border-top: 2px solid #e5e7eb;
-  font-size: 16px;
 }
 
-.order-total strong {
+.order-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.summary-row span {
+  color: #6b7280;
+}
+
+.summary-row.total-row {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid #e5e7eb;
+  font-size: 18px;
+}
+
+.summary-row.total-row strong {
   color: #1f2937;
+  font-weight: 700;
 }
 
 .order-actions {

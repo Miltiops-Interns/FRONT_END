@@ -254,8 +254,46 @@ const CartPage = () => {
                   marginTop: 8,
                 }}
               >
-                <span>Total</span>
+                <span>Subtotal</span>
                 <strong>{currency(totalPrice)}</strong>
+              </div>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  marginTop: 4,
+                  fontSize: "0.9rem",
+                  color: "#666",
+                }}
+              >
+                <span>CGST (2.5%)</span>
+                <span>{currency(totalPrice * 0.025)}</span>
+              </div>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  marginTop: 4,
+                  fontSize: "0.9rem",
+                  color: "#666",
+                }}
+              >
+                <span>SGST/UTGST (2.5%)</span>
+                <span>{currency(totalPrice * 0.025)}</span>
+              </div>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  marginTop: 12,
+                  paddingTop: 12,
+                  borderTop: "1px solid #eee",
+                  fontSize: "1.1rem",
+                  fontWeight: "bold",
+                }}
+              >
+                <span>Total</span>
+                <strong>{currency(totalPrice * 1.05)}</strong>
               </div>
               <motion.button
                 whileHover={{ scale: 1.02 }}
@@ -392,9 +430,23 @@ const CartPage = () => {
                   required
                 />
               </div>
-              <div className="order-total-row">
-                <strong>Total</strong>
-                <strong>{currency(totalPrice)}</strong>
+              <div style={{ marginTop: 16, paddingTop: 16, borderTop: "1px solid #eee" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
+                  <span>Subtotal</span>
+                  <span>{currency(totalPrice)}</span>
+                </div>
+                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8, fontSize: "0.9rem", color: "#666" }}>
+                  <span>CGST (2.5%)</span>
+                  <span>{currency(totalPrice * 0.025)}</span>
+                </div>
+                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8, fontSize: "0.9rem", color: "#666" }}>
+                  <span>SGST/UTGST (2.5%)</span>
+                  <span>{currency(totalPrice * 0.025)}</span>
+                </div>
+                <div className="order-total-row" style={{ marginTop: 12, paddingTop: 12, borderTop: "1px solid #eee" }}>
+                  <strong>Total</strong>
+                  <strong>{currency(totalPrice * 1.05)}</strong>
+                </div>
               </div>
               <div className="modal-actions">
                 <button

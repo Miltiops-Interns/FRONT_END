@@ -28,12 +28,28 @@ router.post("/", async (req, res) => {
       image: i.image ? String(i.image) : undefined,
     }));
 
+    // Calculate subtotal (sum of all items)
+    const subtotal = sanitizedItems.reduce(
+      (sum, item) => sum + (item.price * item.quantity),
+      0
+    );
+
+    // Calculate GST (2.5% CGST + 2.5% SGST/UTGST = 5% total)
+    const CGST_RATE = 0.025; // 2.5%
+    const SGST_RATE = 0.025; // 2.5%
+    const cgst = subtotal * CGST_RATE;
+    const sgst = subtotal * SGST_RATE;
+    const totalWithGST = subtotal + cgst + sgst;
+
     const order = new Order({
       customerName,
       phone,
       whatsapp: whatsapp || "",
       items: sanitizedItems,
-      totalPrice: Number(totalPrice) || 0,
+      subtotal: Number(subtotal.toFixed(2)),
+      cgst: Number(cgst.toFixed(2)),
+      sgst: Number(sgst.toFixed(2)),
+      totalPrice: Number(totalWithGST.toFixed(2)),
     });
 
     await order.save();
@@ -44,7 +60,10 @@ router.post("/", async (req, res) => {
       phone,
       whatsapp: whatsapp || "",
       items: sanitizedItems,
-      totalPrice
+      subtotal: order.subtotal,
+      cgst: order.cgst,
+      sgst: order.sgst,
+      totalPrice: order.totalPrice
     }).catch(err => console.error('Failed to send order notification email:', err));
 
     return res.status(201).json({ message: "Order received", id: order._id });

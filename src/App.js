@@ -112,7 +112,8 @@ const HomePage = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
-            Welcome to Punjabi Rasoi
+            Welcome to
+             Punjabi Rasoi
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
@@ -121,31 +122,20 @@ const HomePage = () => {
           >
             Experience the authentic flavors of Punjab
           </motion.p>
-          <motion.div
-            className="hero-buttons"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
-          >
-            <Link to="/menu">
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="cta-button primary"
-              >
-                View Our Menu
-              </motion.button>
-            </Link>
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="cta-button secondary"
-              onClick={() => setIsReservationOpen(true)}
-            >
-              Make a Reservation
-            </motion.button>
-          </motion.div>
+
+          <div> <img src="/images/bhangra2.png" alt="Bhangra" className="hero-bhangra-image" /></div>
         </div>
+        <motion.button
+          className="hero-mobile-reserve-btn"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.4 }}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={() => setIsReservationOpen(true)}
+        >
+          Make a Reservation
+        </motion.button>
       </motion.section>
 
       {/* Features Section */}

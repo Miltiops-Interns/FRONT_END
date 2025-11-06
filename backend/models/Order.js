@@ -17,7 +17,10 @@ const orderSchema = new mongoose.Schema(
     phone: { type: String, required: true },
     whatsapp: { type: String },
     items: { type: [orderItemSchema], required: true },
-    totalPrice: { type: Number, required: true },
+    subtotal: { type: Number, required: true }, // Price before GST
+    cgst: { type: Number, required: true, default: 0 }, // CGST amount (2.5%)
+    sgst: { type: Number, required: true, default: 0 }, // SGST/UTGST amount (2.5%)
+    totalPrice: { type: Number, required: true }, // Total including GST
     status: {
       type: String,
       enum: ["new", "processing", "completed", "cancelled"],

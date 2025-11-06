@@ -74,6 +74,41 @@ body {
   pointer-events: none;
 }
 
+.hero-bhangra-image {
+  width: 80%;
+  height: 10%;
+  
+  opacity: 1;
+}
+
+.hero-mobile-reserve-btn {
+  display: none; /* Hidden on desktop */
+  position: absolute;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--secondary-color);
+  color: var(--text-dark);
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 50px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  z-index: 3;
+  width: auto;
+  min-width: 200px;
+}
+
+.hero-mobile-reserve-btn:hover {
+  background: var(--accent-color);
+  color: var(--text-light);
+  transform: translateX(-50%) translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+}
+
 .dining-scene-container canvas {
   position: absolute !important;
   top: 0;
@@ -232,7 +267,8 @@ body {
 
 .hero-content p {
   font-size: 1.5rem;
-  margin-bottom: 2rem;
+  margin-top: 2rem;
+  /* margin-bottom: 2rem; */
   opacity: 0;
   animation: fadeInUp 1.2s ease-out 1s forwards;
   color: var(--text-light);
@@ -445,6 +481,7 @@ body {
   font-weight: 700;
   color: white;
   cursor: pointer;
+  text-decoration: none;
 }
 
 .navbar.scrolled .logo {
@@ -489,11 +526,67 @@ body {
   color: var(--secondary-color);
 }
 
+.logo-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.logo-image {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+  flex-shrink: 0;
+  transition: transform 0.3s ease;
+  background: transparent;
+  background-color: transparent;
+}
+
+.logo-image:hover {
+  transform: scale(1.1);
+}
+
+.logo-video {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 0;
+  border: none !important;
+  outline: none !important;
+  background: transparent;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+  overflow: hidden;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.navbar.scrolled .logo-video {
+  border: none !important;
+  outline: none !important;
+  box-shadow: 0 2px 10px rgba(197, 165, 114, 0.3);
+}
+
+.logo-video:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
 .logo-text {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
   background: linear-gradient(135deg, #c5a572 0%, #c5a572 90%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  background-clip: text;
   font-size: 1.8rem;
+  white-space: nowrap;
+}
+
+.logo-word {
+  display: inline-block;
 }
 
 .nav-links {
@@ -621,6 +714,15 @@ body {
   .search-container {
     min-width: 150px;
   }
+
+  .logo-video {
+    width: 50px;
+    height: 50px;
+  }
+
+  .logo-text {
+    font-size: 1.5rem;
+  }
 }
 
 @media (max-width: 768px) {
@@ -636,6 +738,13 @@ body {
   .hero-buttons {
     margin-top: 0.5rem; /* Reduced from 1rem to 0.5rem for mobile */
     gap: 0.75rem; /* Reduced from 1rem to 0.75rem for mobile */
+  }
+
+  .hero-mobile-reserve-btn {
+    display: block; /* Show on mobile */
+    bottom: 20px;
+    padding: 0.9rem 1.8rem;
+    font-size: 0.95rem;
   }
 
   .text-content h2 {
@@ -673,6 +782,54 @@ body {
   .reserve-btn {
     display: none; /* Hide reservation button in mobile view */
   }
+
+  .logo-video {
+    width: 40px;
+    height: 40px;
+  }
+
+  .logo-image {
+    width: 40px;
+    height: 40px;
+  }
+
+  .logo-text {
+    font-size: 1.3rem;
+  }
+
+  .logo-container {
+    gap: 0.3rem;
+  }
+
+  /* Navbar styles for menu and contact pages on mobile */
+  .menu-page .navbar,
+  .contact-page .navbar {
+    min-height: auto;
+    padding-bottom: 1.5rem;
+    background: rgba(255, 255, 255, 0.98) !important;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  }
+
+  .menu-page .navbar .nav-links a,
+  .contact-page .navbar .nav-links a {
+    color: var(--primary-color) !important;
+  }
+
+  .menu-page .navbar .logo,
+  .contact-page .navbar .logo {
+    color: var(--primary-color) !important;
+  }
+
+  .menu-page .navbar .logo-text,
+  .contact-page .navbar .logo-text {
+    color: var(--primary-color) !important;
+  }
+
+  .menu-page .page-header,
+  .contact-page .page-header {
+    margin-top: 140px; /* Increased to account for wrapped navbar */
+  }
 }
 
 @media (max-width: 480px) {
@@ -689,9 +846,36 @@ body {
     gap: 0.6rem; /* Further reduced gap between buttons for smaller mobile */
   }
 
+  .hero-mobile-reserve-btn {
+    display: block; /* Show on small mobile */
+    bottom: 100px;
+    padding: 0.8rem 1.5rem;
+    font-size: 0.9rem;
+    min-width: 180px;
+    left: auto;
+  }
+
   .explore-btn {
     padding: 0.8rem 1.5rem;
     font-size: 1rem;
+  }
+
+  .logo-video {
+    width: 35px;
+    height: 35px;
+  }
+
+  .logo-image {
+    width: 35px;
+    height: 35px;
+  }
+
+  .logo-text {
+    font-size: 1.1rem;
+  }
+
+  .logo-container {
+    gap: 0.2rem;
   }
 
   .nav-links {
@@ -709,6 +893,17 @@ body {
   .reserve-btn {
     padding: 0.6rem 1rem;
     font-size: 0.9rem;
+  }
+
+  /* Navbar styles for menu and contact pages on small mobile */
+  .menu-page .navbar,
+  .contact-page .navbar {
+    padding-bottom: 1.5rem;
+  }
+
+  .menu-page .page-header,
+  .contact-page .page-header {
+    margin-top: 115px; /* Increased to account for wrapped navbar */
   }
 }
 
@@ -1316,6 +1511,7 @@ body {
   text-align: center;
   color: white;
   margin-top: 80px;
+  position: relative;
 }
 
 .header-content h1 {

@@ -2,31 +2,62 @@ import React, { useEffect, useState } from "react";
 import "./AdminReservationsPage.css";
 import { useNavigate } from "react-router-dom";
 import { apiFetch } from "../utils/api";
+import { checkToken } from "../utils/checkToken";
 
 const AdminReservationsPage = () => {
+  const navigate = useNavigate();
   const [reservations, setReservations] = useState([]);
   const [loading, setLoading] = useState(true);
   const token = localStorage.getItem("token");
 
   useEffect(() => {
-    const fetchReservations = async () => {
-      try {
-        const res = await apiFetch("/api/reservations", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        const data = await res.json();
-        setReservations(data);
-      } catch (err) {
-        console.error("Error fetching reservations:", err);
-      } finally {
-        setLoading(false);
+    let isMounted = true;
+
+    const verify = async () => {
+      const isValid = await checkToken();
+      if (!isMounted) return; // Prevent navigation if component unmounted
+      
+      if (!isValid) {
+        localStorage.removeItem("token");
+        navigate("/admin/login");
+        return;
+      }
+      
+      // Only fetch if component is still mounted and authenticated
+      if (isMounted) {
+        const fetchReservations = async () => {
+          try {
+            const res = await apiFetch("/api/reservations", {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            });
+            const data = await res.json();
+            if (isMounted) {
+              setReservations(data);
+            }
+          } catch (err) {
+            if (isMounted) {
+              console.error("Error fetching reservations:", err);
+            }
+          } finally {
+            if (isMounted) {
+              setLoading(false);
+            }
+          }
+        };
+
+        fetchReservations();
       }
     };
 
-    fetchReservations();
-  }, [token]);
+    verify();
+
+    // Cleanup function
+    return () => {
+      isMounted = false;
+    };
+  }, [navigate, token]);
 
   const updateStatus = async (id, newStatus) => {
     try {
@@ -89,8 +120,6 @@ const AdminReservationsPage = () => {
     const date = new Date(dateString);
     return date.toLocaleDateString();
   };
-
-  const navigate = useNavigate();
 
   return (
     <div className="reservations-admin">

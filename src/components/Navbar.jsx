@@ -25,7 +25,13 @@ const Navbar = () => {
       <nav className={`navbar ${isScrolled ? "scrolled" : ""} ${isHomePage ? "home-page" : ""}`}>
         <div className="nav-content">
           <Link to="/" className="logo">
-            <span className="logo-text">Punjabi Rasoi</span>
+            <div className="logo-container">
+              <img src="/images/logopr3.png" alt="Punjabi Rasoi Logo" className="logo-image" />
+              <span className="logo-text">
+                <span className="logo-word">Punjabi</span>
+                <span className="logo-word">Rasoi</span>
+              </span>
+            </div>
           </Link>
 
           <div className="nav-links">

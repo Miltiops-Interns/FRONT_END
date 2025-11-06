@@ -448,6 +448,22 @@ const sendNotificationEmail = async (type, data) => {
       }
     }
     
+    // Resend doesn't allow sending from Gmail or other free email providers
+    // Use Resend's test domain if sender is from a free email provider
+    const freeEmailDomains = ['gmail.com', 'yahoo.com', 'hotmail.com', 'outlook.com', 'aol.com', 'icloud.com'];
+    const senderDomain = senderEmail?.split('@')[1]?.toLowerCase();
+    
+    if (senderDomain && freeEmailDomains.includes(senderDomain)) {
+      console.log("⚠️  [Resend API] Gmail/free email detected, using Resend test domain");
+      senderEmail = 'onboarding@resend.dev';
+    }
+    
+    // Fallback to Resend test domain if EMAIL_FROM is not set or is invalid
+    if (!senderEmail || !senderEmail.includes('@')) {
+      console.log("⚠️  [Resend API] EMAIL_FROM not set or invalid, using Resend test domain");
+      senderEmail = 'onboarding@resend.dev';
+    }
+    
     console.log("🔍 [Resend API] Attempting to send email...");
     console.log("  From:", senderEmail);
     console.log("  To:", toEmail);
@@ -509,7 +525,12 @@ const sendNotificationEmail = async (type, data) => {
       console.error("🚨 [Resend] API key is invalid or unauthorized");
       errorMessage = "Unauthorized - check RESEND_API_KEY in .env";
     }
-    if (error.message && error.message.includes("Domain") || error.message.includes("not verified")) {
+    if (error.message && (error.message.includes("Not authorized to send emails from") || error.message.includes("gmail.com"))) {
+      console.error("🚨 [Resend] Gmail/free email provider detected - Resend doesn't allow sending from free email providers");
+      console.error("🚨 [Resend] Please set EMAIL_FROM to onboarding@resend.dev or a verified domain email");
+      errorMessage = "Resend doesn't allow sending from Gmail/free email providers. Use onboarding@resend.dev or verify a domain.";
+    }
+    if (error.message && (error.message.includes("Domain") || error.message.includes("not verified"))) {
       console.error("🚨 [Resend] Domain issue - check sender email is verified");
       errorMessage = "Domain not verified - check EMAIL_FROM domain in Resend dashboard";
     }

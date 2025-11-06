@@ -80,7 +80,7 @@ const ContactPage = () => {
                 <h3>Location</h3>
                 <p>
                   Koti, Solan, NH-22, Ambala Shimla Kaurik Road, Dharampur,
-                  Dharampur, Himachal Pradesh 173209
+                  Himachal Pradesh 173209
                 </p>
               </div>
             </div>
@@ -95,7 +95,7 @@ const ContactPage = () => {
               <i className="fas fa-envelope"></i>
               <div>
                 <h3>Email</h3>
-                <p>info@punjabirasoi.com</p>
+                <p>punjabirasoikoti@gmail.com</p>
               </div>
             </div>
             <div className="info-item">

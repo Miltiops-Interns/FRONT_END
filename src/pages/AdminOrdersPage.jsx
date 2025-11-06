@@ -67,7 +67,7 @@ const AdminOrdersPage = () => {
     }
   };
 
-  const handleWhatsApp = (phone, customerName, orderItems, totalPrice) => {
+  const handleWhatsApp = (phone, customerName, orderItems, subtotal, cgst, sgst, totalPrice) => {
     // Format order items for WhatsApp message
     const itemsText = orderItems
       .map(
@@ -78,6 +78,15 @@ const AdminOrdersPage = () => {
       )
       .join("\n");
 
+    // Calculate subtotal if not provided (for backward compatibility)
+    const calculatedSubtotal = subtotal || orderItems.reduce(
+      (sum, item) => sum + (item.price * item.quantity),
+      0
+    );
+    const calculatedCGST = cgst || calculatedSubtotal * 0.025;
+    const calculatedSGST = sgst || calculatedSubtotal * 0.025;
+    const calculatedTotal = totalPrice || calculatedSubtotal + calculatedCGST + calculatedSGST;
+
     // Use simple emojis - using ASCII-safe alternatives that work better with WhatsApp
     // Using simple symbols that encode properly in URLs
     const message = `Hi ${customerName}! 
@@ -87,7 +96,11 @@ Your order has been received and is being processed.
 Order Details:
 ${itemsText}
 
-Total: ₹${totalPrice.toFixed(2)}
+Subtotal: ₹${calculatedSubtotal.toFixed(2)}
+CGST (2.5%): ₹${calculatedCGST.toFixed(2)}
+SGST/UTGST (2.5%): ₹${calculatedSGST.toFixed(2)}
+━━━━━━━━━━━━━━━━━━━━
+Total: ₹${calculatedTotal.toFixed(2)}
 
 We'll keep you updated on your order status. Thank you for choosing Punjabi Rasoi!`;
     
@@ -162,8 +175,28 @@ We'll keep you updated on your order status. Thank you for choosing Punjabi Raso
               </div>
 
               <div className="order-total">
-                <strong>Total</strong>
-                <strong>₹{Number(order.totalPrice).toFixed(2)}</strong>
+                <div className="order-summary">
+                  <div className="summary-row">
+                    <span>Subtotal:</span>
+                    <span>₹{Number(order.subtotal || order.totalPrice).toFixed(2)}</span>
+                  </div>
+                  {order.cgst !== undefined && order.sgst !== undefined && (
+                    <>
+                      <div className="summary-row">
+                        <span>CGST (2.5%):</span>
+                        <span>₹{Number(order.cgst).toFixed(2)}</span>
+                      </div>
+                      <div className="summary-row">
+                        <span>SGST/UTGST (2.5%):</span>
+                        <span>₹{Number(order.sgst).toFixed(2)}</span>
+                      </div>
+                    </>
+                  )}
+                  <div className="summary-row total-row">
+                    <strong>Total:</strong>
+                    <strong>₹{Number(order.totalPrice).toFixed(2)}</strong>
+                  </div>
+                </div>
               </div>
 
               <div className="order-actions">
@@ -189,6 +222,9 @@ We'll keep you updated on your order status. Thank you for choosing Punjabi Raso
                         order.whatsapp || order.phone,
                         order.customerName,
                         order.items,
+                        order.subtotal,
+                        order.cgst,
+                        order.sgst,
                         order.totalPrice
                       )
                     }

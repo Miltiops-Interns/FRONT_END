@@ -2,8 +2,10 @@ import React, { useState, useEffect } from "react";
 import "./AdminMenuPage.css"; // Make sure this path is correct
 import { useNavigate } from "react-router-dom";
 import { apiFetch } from "../utils/api";
+import { checkToken } from "../utils/checkToken";
 
 const AdminMenuPage = () => {
+  const navigate = useNavigate();
   const [menuItems, setMenuItems] = useState([]);
   const [newItem, setNewItem] = useState({
     name: "",
@@ -19,61 +21,125 @@ const AdminMenuPage = () => {
   const token = localStorage.getItem("token");
 
   useEffect(() => {
-    apiFetch("/api/menu")
-      .then((res) => res.json())
-      .then((data) => setMenuItems(data));
-  }, []);
+    let isMounted = true;
+
+    const verify = async () => {
+      const isValid = await checkToken();
+      if (!isMounted) return; // Prevent navigation if component unmounted
+      
+      if (!isValid) {
+        localStorage.removeItem("token");
+        navigate("/admin/login");
+        return;
+      }
+      
+      // Only fetch if component is still mounted and authenticated
+      if (isMounted) {
+        apiFetch("/api/menu")
+          .then((res) => res.json())
+          .then((data) => {
+            if (isMounted) {
+              setMenuItems(data);
+            }
+          });
+      }
+    };
+
+    verify();
+
+    // Cleanup function
+    return () => {
+      isMounted = false;
+    };
+  }, [navigate]);
 
   const addItem = async () => {
     if (!newItem.name || !newItem.price)
       return alert("Name and price are required!");
     setLoading(true);
-    const res = await apiFetch("/api/menu", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(newItem),
-    });
+    
+    try {
+      const res = await apiFetch("/api/menu", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(newItem),
+      });
 
-    const data = await res.json();
-    setMenuItems([...menuItems, data]);
-    setNewItem({
-      name: "",
-      description: "",
-      price: "",
-      category: "",
-      image: "",
-    });
-    setLoading(false);
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({ error: "Failed to add menu item" }));
+        alert(errorData.error || `Error: ${res.status} ${res.statusText}`);
+        setLoading(false);
+        return;
+      }
+
+      const data = await res.json();
+      setMenuItems([...menuItems, data]);
+      setNewItem({
+        name: "",
+        description: "",
+        price: "",
+        category: "",
+        image: "",
+      });
+    } catch (err) {
+      console.error("Error adding menu item:", err);
+      alert("Failed to add menu item. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const updateItem = async (id) => {
-    const res = await apiFetch(`/api/menu/${id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(editItem),
-    });
+    try {
+      const res = await apiFetch(`/api/menu/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(editItem),
+      });
 
-    const updated = await res.json();
-    setMenuItems(menuItems.map((item) => (item._id === id ? updated : item)));
-    setEditId(null);
-    setEditItem({});
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({ error: "Failed to update menu item" }));
+        alert(errorData.error || `Error: ${res.status} ${res.statusText}`);
+        return;
+      }
+
+      const updated = await res.json();
+      setMenuItems(menuItems.map((item) => (item._id === id ? updated : item)));
+      setEditId(null);
+      setEditItem({});
+    } catch (err) {
+      console.error("Error updating menu item:", err);
+      alert("Failed to update menu item. Please try again.");
+    }
   };
 
   const deleteItem = async (id) => {
     if (!window.confirm("Are you sure you want to delete this item?")) return;
-    await apiFetch(`/api/menu/${id}`, {
-      method: "DELETE",
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    setMenuItems(menuItems.filter((item) => item._id !== id));
+    
+    try {
+      const res = await apiFetch(`/api/menu/${id}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({ error: "Failed to delete menu item" }));
+        alert(errorData.error || `Error: ${res.status} ${res.statusText}`);
+        return;
+      }
+
+      setMenuItems(menuItems.filter((item) => item._id !== id));
+    } catch (err) {
+      console.error("Error deleting menu item:", err);
+      alert("Failed to delete menu item. Please try again.");
+    }
   };
-  const navigate = useNavigate();
 
   return (
     <div className="menu-admin">
