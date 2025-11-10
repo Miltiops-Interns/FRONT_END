@@ -6,6 +6,8 @@ services:
       dockerfile: Dockerfile
     container_name: backend
     restart: unless-stopped
+    env_file:
+      - .env
     environment:
       - JWT_SECRET=${JWT_SECRET:-development-secret-change-me}
       - MONGO_URI=${MONGO_URI:-}
@@ -21,6 +23,8 @@ services:
       dockerfile: Dockerfile
     container_name: frontend
     restart: unless-stopped
+    env_file:
+      - .env.development
     depends_on:
       - backend
     ports:

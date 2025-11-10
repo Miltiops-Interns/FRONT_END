@@ -12,12 +12,19 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-/* 🧠 Log important env variables (safe ones) to confirm Render is reading them */
-console.log("📬 EMAIL_HOST:", process.env.EMAIL_HOST);
-console.log("📬 EMAIL_PORT:", process.env.EMAIL_PORT);
-console.log("📬 EMAIL_USER:", process.env.EMAIL_USER ? "[SET]" : "[MISSING]");
-console.log("📬 ADMIN_EMAIL:", process.env.ADMIN_EMAIL);
-console.log("🪙 MONGO_URI set:", Boolean(process.env.MONGO_URI));
+/* 🧠 COMPREHENSIVE ENVIRONMENT VARIABLE LOGGING */
+console.log("🔍 [Server Startup] Environment Variables Check:");
+console.log("  NODE_ENV:", process.env.NODE_ENV || "[NOT SET]");
+console.log("  PORT:", process.env.PORT || "[NOT SET - using default 5000]");
+console.log("  HOST:", process.env.HOST || "[NOT SET - using default 0.0.0.0]");
+console.log("  JWT_SECRET:", process.env.JWT_SECRET ? "[SET]" : "[MISSING]");
+console.log("  MONGO_URI:", process.env.MONGO_URI ? "[SET]" : "[MISSING]");
+console.log("  EMAIL_HOST:", process.env.EMAIL_HOST || "[MISSING]");
+console.log("  EMAIL_PORT:", process.env.EMAIL_PORT || "[MISSING]");
+console.log("  EMAIL_USER:", process.env.EMAIL_USER ? "[SET]" : "[MISSING]");
+console.log("  EMAIL_PASS:", process.env.EMAIL_PASS ? "[SET]" : "[MISSING]");
+console.log("  ADMIN_EMAIL:", process.env.ADMIN_EMAIL || "[MISSING]");
+console.log("  DEBUG_EMAIL:", process.env.DEBUG_EMAIL || "[NOT SET]");
 
 // =======================
 // 🧭 MongoDB Connection
@@ -61,11 +68,43 @@ mongoose
   });
 
 // =======================
-// 📤 Test SMTP Endpoint (for debugging Render SMTP)
+// 📤 Test Endpoints (for debugging Render)
 // =======================
+
+// Test environment variables
+app.get("/test-env", (req, res) => {
+  console.log("🔍 [Test] Environment variables check requested");
+  const envCheck = {
+    NODE_ENV: process.env.NODE_ENV || "[NOT SET]",
+    PORT: process.env.PORT || "[NOT SET]",
+    HOST: process.env.HOST || "[NOT SET]",
+    JWT_SECRET: process.env.JWT_SECRET ? "[SET]" : "[MISSING]",
+    MONGO_URI: process.env.MONGO_URI ? "[SET]" : "[MISSING]",
+    EMAIL_HOST: process.env.EMAIL_HOST || "[MISSING]",
+    EMAIL_PORT: process.env.EMAIL_PORT || "[MISSING]",
+    EMAIL_USER: process.env.EMAIL_USER ? "[SET]" : "[MISSING]",
+    EMAIL_PASS: process.env.EMAIL_PASS ? "[SET]" : "[MISSING]",
+    ADMIN_EMAIL: process.env.ADMIN_EMAIL || "[MISSING]",
+    DEBUG_EMAIL: process.env.DEBUG_EMAIL || "[NOT SET]",
+  };
+  console.log("🔍 [Test] Environment check result:", envCheck);
+  res.json({ status: "Environment variables check", data: envCheck });
+});
+
+// Test SMTP connection
 app.get("/test-smtp", async (req, res) => {
   try {
-    console.log("Testing SMTP connection...");
+    console.log("🔍 [Test] SMTP connection test requested");
+    console.log("🔍 [Test] SMTP config:");
+    console.log("  Host:", process.env.EMAIL_HOST);
+    console.log("  Port:", process.env.EMAIL_PORT);
+    console.log(
+      "  User:",
+      process.env.EMAIL_USER
+        ? `${process.env.EMAIL_USER.slice(0, 3)}****`
+        : "[MISSING]"
+    );
+    console.log("  Pass:", process.env.EMAIL_PASS ? "[SET]" : "[MISSING]");
 
     const transporter = nodemailer.createTransport({
       host: process.env.EMAIL_HOST,
@@ -78,11 +117,33 @@ app.get("/test-smtp", async (req, res) => {
     });
 
     await transporter.verify();
-    console.log("✅ SMTP verified successfully");
-    res.send("✅ SMTP connection successful");
+    console.log("✅ [Test] SMTP verified successfully");
+    res.json({
+      status: "success",
+      message: "SMTP connection successful",
+      config: {
+        host: process.env.EMAIL_HOST,
+        port: process.env.EMAIL_PORT,
+        secure: true,
+      },
+    });
   } catch (err) {
-    console.error("❌ SMTP Error:", err);
-    res.status(500).send("❌ SMTP failed: " + err.message);
+    console.error("❌ [Test] SMTP Error:", err);
+    console.error("❌ [Test] Error details:", {
+      message: err.message,
+      code: err.code,
+      response: err.response,
+      command: err.command,
+    });
+    res.status(500).json({
+      status: "error",
+      message: "SMTP failed: " + err.message,
+      error: {
+        message: err.message,
+        code: err.code,
+        response: err.response,
+      },
+    });
   }
 });
 
@@ -119,5 +180,18 @@ const port = process.env.PORT || 5000;
 const host = process.env.HOST || "0.0.0.0";
 
 app.listen(port, host, () => {
-  console.log(`🚀 Backend running on http://${host}:${port}`);
+  console.log("🚀 [Server] Backend server started successfully!");
+  console.log(`🚀 [Server] Running on http://${host}:${port}`);
+  console.log(
+    `🚀 [Server] Environment: ${process.env.NODE_ENV || "development"}`
+  );
+  console.log("🚀 [Server] Available endpoints:");
+  console.log("  GET  /test-env - Test environment variables");
+  console.log("  GET  /test-smtp - Test SMTP connection");
+  console.log("  POST /api/contact - Contact form submission");
+  console.log("  POST /api/reservations - Reservation submission");
+  console.log("  POST /api/orders - Order submission");
+  console.log("  GET  /api/menu - Get menu items");
+  console.log("  POST /api/auth/login - Admin login");
+  console.log("🚀 [Server] Ready to handle requests!");
 });

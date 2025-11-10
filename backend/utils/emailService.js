@@ -1,7 +1,51 @@
-const nodemailer = require('nodemailer');
-require('dotenv').config();
+const nodemailer = require("nodemailer");
+require("dotenv").config();
 
-// Create transporter
+// Email debug toggle (enable verbose logging in production only when needed)
+const EMAIL_DEBUG =
+  String(process.env.DEBUG_EMAIL || "").toLowerCase() === "true";
+
+// 🔍 COMPREHENSIVE ENVIRONMENT VARIABLE LOGGING
+console.log("🔍 [Email Debug] Environment Variables Check:");
+console.log("  EMAIL_HOST:", process.env.EMAIL_HOST || "[MISSING]");
+console.log("  EMAIL_PORT:", process.env.EMAIL_PORT || "[MISSING]");
+console.log(
+  "  EMAIL_USER:",
+  process.env.EMAIL_USER
+    ? `${process.env.EMAIL_USER.slice(0, 3)}****`
+    : "[MISSING]"
+);
+console.log("  EMAIL_PASS:", process.env.EMAIL_PASS ? "[SET]" : "[MISSING]");
+console.log("  ADMIN_EMAIL:", process.env.ADMIN_EMAIL || "[MISSING]");
+console.log("  DEBUG_EMAIL:", process.env.DEBUG_EMAIL || "[NOT SET]");
+console.log("  NODE_ENV:", process.env.NODE_ENV || "[NOT SET]");
+
+// Build a non-sensitive snapshot of config for logs
+const safeEmailConfig = {
+  host: process.env.EMAIL_HOST,
+  port: Number(process.env.EMAIL_PORT) || undefined,
+  secure: String(process.env.EMAIL_PORT || "") == "465",
+  userMasked: process.env.EMAIL_USER
+    ? `${String(process.env.EMAIL_USER).slice(0, 2)}****`
+    : undefined,
+  from: process.env.EMAIL_USER,
+  to: process.env.ADMIN_EMAIL,
+};
+console.log("[Email] Config:", safeEmailConfig);
+
+// 🔍 SMTP TRANSPORTER CREATION WITH DETAILED LOGGING
+console.log("🔍 [SMTP] Creating transporter with config:");
+console.log("  Host:", process.env.EMAIL_HOST);
+console.log("  Port:", process.env.EMAIL_PORT);
+console.log("  Secure:", process.env.EMAIL_PORT == 465);
+console.log(
+  "  User:",
+  process.env.EMAIL_USER
+    ? `${process.env.EMAIL_USER.slice(0, 3)}****`
+    : "[MISSING]"
+);
+console.log("  Pass:", process.env.EMAIL_PASS ? "[SET]" : "[MISSING]");
+
 const transporter = nodemailer.createTransport({
   host: process.env.EMAIL_HOST,
   port: process.env.EMAIL_PORT,
@@ -10,13 +54,58 @@ const transporter = nodemailer.createTransport({
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS,
   },
+  logger: EMAIL_DEBUG,
+  debug: EMAIL_DEBUG,
 });
+
+// 🔍 ALWAYS VERIFY SMTP CONNECTION ON STARTUP
+console.log("🔍 [SMTP] Verifying connection...");
+transporter
+  .verify()
+  .then(() => {
+    console.log("✅ [SMTP] Connection verified successfully");
+    console.log("✅ [SMTP] Ready to send emails");
+  })
+  .catch((err) => {
+    console.error("❌ [SMTP] Connection verification FAILED:");
+    console.error("❌ [SMTP] Error message:", err.message || err);
+    console.error("❌ [SMTP] Error code:", err.code || "N/A");
+    console.error("❌ [SMTP] Error response:", err.response || "N/A");
+    console.error("❌ [SMTP] Full error:", err);
+
+    // 🔍 SPECIFIC GOOGLE BLOCKING DETECTION
+    if (err.message && err.message.includes("Invalid login")) {
+      console.error(
+        "🚨 [SMTP] GOOGLE BLOCKING DETECTED: Invalid login credentials"
+      );
+      console.error(
+        "🚨 [SMTP] Check if 'Less secure app access' is enabled or use App Password"
+      );
+    }
+    if (err.message && err.message.includes("Authentication failed")) {
+      console.error(
+        "🚨 [SMTP] AUTHENTICATION FAILED: Check credentials and app password"
+      );
+    }
+    if (err.message && err.message.includes("Connection timeout")) {
+      console.error(
+        "🚨 [SMTP] CONNECTION TIMEOUT: Check network/firewall settings"
+      );
+    }
+  });
 
 // Function to send notification email
 const sendNotificationEmail = async (type, data) => {
   try {
-    let subject = '';
-    let html = '';
+    console.log("🔍 [Email] Send attempt started:");
+    console.log("  Type:", type);
+    console.log("  To:", process.env.ADMIN_EMAIL);
+    console.log("  Host:", process.env.EMAIL_HOST);
+    console.log("  Port:", Number(process.env.EMAIL_PORT) || undefined);
+    console.log("  Secure:", String(process.env.EMAIL_PORT || "") == "465");
+    console.log("  Data keys:", Object.keys(data || {}));
+    let subject = "";
+    let html = "";
 
     // Simple and Attractive Email Template
     const createEmailTemplate = (title, content, typeColor, icon) => `
@@ -223,10 +312,10 @@ const sendNotificationEmail = async (type, data) => {
     `;
 
     switch (type) {
-      case 'contact':
-        subject = '🍽️ New Contact Message - Restaurant Admin Alert';
+      case "contact":
+        subject = "🍽️ New Contact Message - Restaurant Admin Alert";
         html = createEmailTemplate(
-          'New Contact Message',
+          "New Contact Message",
           `
             <h2 style="color: #374151; margin-bottom: 24px; text-align: center;">📬 New Contact Message Received</h2>
             <div class="info-grid">
@@ -248,24 +337,26 @@ const sendNotificationEmail = async (type, data) => {
                 <span class="info-icon">📞</span>
                 <div class="info-content">
                   <div class="label">Phone</div>
-                  <div class="value">${data.phone || 'Not provided'}</div>
+                  <div class="value">${data.phone || "Not provided"}</div>
                 </div>
               </div>
             </div>
             <div class="message-section">
               <div class="label">💬 Message</div>
-              <div style="margin-top: 12px; white-space: pre-wrap; color: #111827;">${data.message}</div>
+              <div style="margin-top: 12px; white-space: pre-wrap; color: #111827;">${
+                data.message
+              }</div>
             </div>
           `,
-          '#0ea5e9',
-          '💬'
+          "#0ea5e9",
+          "💬"
         );
         break;
 
-      case 'reservation':
-        subject = '🍽️ New Reservation Request - Restaurant Admin Alert';
+      case "reservation":
+        subject = "🍽️ New Reservation Request - Restaurant Admin Alert";
         html = createEmailTemplate(
-          'New Reservation',
+          "New Reservation",
           `
             <h2 style="color: #374151; margin-bottom: 24px; text-align: center;">📅 New Reservation Request</h2>
             <div class="info-grid">
@@ -294,7 +385,9 @@ const sendNotificationEmail = async (type, data) => {
                 <span class="info-icon">📅</span>
                 <div class="info-content">
                   <div class="label">Date</div>
-                  <div class="value">${new Date(data.date).toLocaleDateString()}</div>
+                  <div class="value">${new Date(
+                    data.date
+                  ).toLocaleDateString()}</div>
                 </div>
               </div>
               <div class="info-item">
@@ -312,21 +405,27 @@ const sendNotificationEmail = async (type, data) => {
                 </div>
               </div>
             </div>
-            ${data.specialRequests ? `
+            ${
+              data.specialRequests
+                ? `
             <div class="message-section">
               <div class="label">🎯 Special Requests</div>
               <div style="margin-top: 12px; color: #111827;">${data.specialRequests}</div>
             </div>
-            ` : ''}
+            `
+                : ""
+            }
           `,
-          '#10b981',
-          '📅'
+          "#10b981",
+          "📅"
         );
         break;
 
-      case 'order':
-        subject = '🍽️ New Order Received - Restaurant Admin Alert';
-        const itemsList = data.items.map(item => `
+      case "order":
+        subject = "🍽️ New Order Received - Restaurant Admin Alert";
+        const itemsList = data.items
+          .map(
+            (item) => `
           <div class="order-item">
             <div>
               <span class="item-name">${item.name}</span>
@@ -334,10 +433,12 @@ const sendNotificationEmail = async (type, data) => {
             </div>
             <span class="item-price">₹${item.price * item.quantity}</span>
           </div>
-        `).join('');
+        `
+          )
+          .join("");
 
         html = createEmailTemplate(
-          'New Order',
+          "New Order",
           `
             <h2 style="color: #374151; margin-bottom: 24px; text-align: center;">🛒 New Order Received</h2>
             <div class="info-grid">
@@ -359,7 +460,7 @@ const sendNotificationEmail = async (type, data) => {
                 <span class="info-icon">💬</span>
                 <div class="info-content">
                   <div class="label">WhatsApp</div>
-                  <div class="value">${data.whatsapp || 'Not provided'}</div>
+                  <div class="value">${data.whatsapp || "Not provided"}</div>
                 </div>
               </div>
             </div>
@@ -371,13 +472,13 @@ const sendNotificationEmail = async (type, data) => {
               </div>
             </div>
           `,
-          '#ef4444',
-          '🛒'
+          "#ef4444",
+          "🛒"
         );
         break;
 
       default:
-        throw new Error('Unknown notification type');
+        throw new Error("Unknown notification type");
     }
 
     const mailOptions = {
@@ -387,13 +488,67 @@ const sendNotificationEmail = async (type, data) => {
       html: html,
     };
 
+    console.log("🔍 [Email] Attempting to send mail...");
     const info = await transporter.sendMail(mailOptions);
-    console.log('Notification email sent:', info.messageId);
+    console.log("✅ [Email] Send success:");
+    console.log(
+      "  Message ID:",
+      info && info.messageId ? info.messageId : "N/A"
+    );
+    console.log("  Response:", info && info.response ? info.response : "N/A");
+    console.log("  Accepted:", info && info.accepted ? info.accepted : "N/A");
+    console.log("  Rejected:", info && info.rejected ? info.rejected : "N/A");
     return { success: true, messageId: info.messageId };
   } catch (error) {
-    console.error('Error sending notification email:', error);
+    console.error("❌ [Email] Send error occurred:");
+    console.error(
+      "  Error message:",
+      error && error.message ? error.message : "Unknown error"
+    );
+    console.error("  Error code:", error && error.code ? error.code : "N/A");
+    console.error(
+      "  Error response:",
+      error && error.response ? error.response : "N/A"
+    );
+    console.error(
+      "  Error command:",
+      error && error.command ? error.command : "N/A"
+    );
+    console.error("  Full error object:", error);
+
+    // 🔍 SPECIFIC ERROR DETECTION
+    if (error.message && error.message.includes("Invalid login")) {
+      console.error(
+        "🚨 [Email] GOOGLE BLOCKING: Invalid login - use App Password"
+      );
+    }
+    if (error.message && error.message.includes("Authentication failed")) {
+      console.error("🚨 [Email] AUTH FAILED: Check credentials");
+    }
+    if (error.message && error.message.includes("Connection timeout")) {
+      console.error("🚨 [Email] TIMEOUT: Network/firewall issue");
+    }
+    if (error.message && error.message.includes("ENOTFOUND")) {
+      console.error("🚨 [Email] DNS ERROR: Cannot resolve SMTP host");
+    }
+
     return { success: false, error: error.message };
   }
 };
 
-module.exports = { sendNotificationEmail };
+const verifyTransport = async () => {
+  try {
+    console.log("🔍 [Email] Verifying transport...");
+    await transporter.verify();
+    console.log("✅ [Email] Transport verification successful");
+    return { ok: true };
+  } catch (err) {
+    console.error("❌ [Email] Transport verification failed:");
+    console.error("  Error:", err && err.message ? err.message : String(err));
+    console.error("  Code:", err && err.code ? err.code : "N/A");
+    console.error("  Response:", err && err.response ? err.response : "N/A");
+    return { ok: false, error: err && err.message ? err.message : String(err) };
+  }
+};
+
+module.exports = { sendNotificationEmail, verifyTransport };

@@ -11,7 +11,7 @@ const derivedBase = (() => {
   if (typeof window !== "undefined") {
     return window.location.origin;
   }
-  return "http://localhost:5000";
+  return "https://backend-9nrq.onrender.com";
 })();
 
 const baseRaw = envBase || derivedBase;
