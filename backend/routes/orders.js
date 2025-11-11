@@ -115,4 +115,18 @@ router.put("/:id", verifyToken, async (req, res) => {
   }
 });
 
+// DELETE /api/orders/:id - admin only: delete an order
+router.delete("/:id", verifyToken, async (req, res) => {
+  try {
+    const deleted = await Order.findByIdAndDelete(req.params.id);
+    if (!deleted) {
+      return res.status(404).json({ error: "Order not found" });
+    }
+    res.json({ message: "Order deleted successfully" });
+  } catch (err) {
+    console.error("Error deleting order:", err);
+    res.status(500).json({ error: "Failed to delete order" });
+  }
+});
+
 module.exports = router;

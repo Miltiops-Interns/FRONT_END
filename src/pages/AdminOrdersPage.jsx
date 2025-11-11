@@ -67,6 +67,35 @@ const AdminOrdersPage = () => {
     }
   };
 
+  const deleteOrder = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this order?")) {
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem("token");
+      const res = await apiFetch(`/api/orders/${id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!res.ok) {
+        const errorData = await res
+          .json()
+          .catch(() => ({ error: "Failed to delete order" }));
+        alert(errorData.error || `Error: ${res.status} ${res.statusText}`);
+        return;
+      }
+
+      setOrders((prev) => prev.filter((order) => order._id !== id));
+    } catch (e) {
+      console.error("Error deleting order:", e);
+      alert("Failed to delete order. Please try again.");
+    }
+  };
+
   const handleWhatsApp = (phone, customerName, orderItems, subtotal, cgst, sgst, totalPrice) => {
     // Format order items for WhatsApp message
     const itemsText = orderItems
@@ -233,6 +262,12 @@ We'll keep you updated on your order status. Thank you for choosing Punjabi Raso
                     WhatsApp
                   </button>
                 )}
+                <button
+                  className="delete-order-btn"
+                  onClick={() => deleteOrder(order._id)}
+                >
+                  🗑️ Delete
+                </button>
               </div>
 
               <div className="order-meta">

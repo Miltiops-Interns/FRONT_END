@@ -79,8 +79,8 @@ const Footer = () => {
 
         <div className="footer-section">
           <h4>Opening Hours</h4>
-          <p>Monday - Friday: 11:00 AM - 10:00 PM</p>
-          <p>Saturday - Sunday: 10:00 AM - 11:00 PM</p>
+          <p>Monday - Friday: 08:00 AM - 12:00 AM</p>
+          <p>Saturday - Sunday: 07:00 AM - 12:00 AM</p>
           <motion.button
             className="reservation-btn"
             whileHover={{ scale: 1.05 }}

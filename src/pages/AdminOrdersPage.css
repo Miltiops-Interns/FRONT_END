@@ -219,6 +219,22 @@
   font-size: 16px;
 }
 
+.delete-order-btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 8px;
+  background: #ef4444;
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+  font-size: 14px;
+}
+
+.delete-order-btn:hover {
+  background: #dc2626;
+  transform: translateY(-1px);
+}
+
 .order-meta {
   margin-top: 16px;
   padding-top: 16px;
@@ -263,7 +279,8 @@
   }
 
   .status-btn,
-  .whatsapp-btn {
+  .whatsapp-btn,
+  .delete-order-btn {
     width: 100%;
     justify-content: center;
   }

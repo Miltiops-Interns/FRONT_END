@@ -142,60 +142,31 @@ const CartPage = () => {
         </motion.div>
       </div>
 
-      <div
-        className="cart-container"
-        style={{ maxWidth: 960, margin: "0 auto", padding: 16 }}
-      >
+      <div className="cart-container">
         {items.length === 0 ? (
-          <div style={{ textAlign: "center", padding: 40 }}>
+          <div className="cart-empty">
             <p>Your cart is empty.</p>
             <Link to="/menu">Browse the menu</Link>
           </div>
         ) : (
-          <div
-            className="cart-content"
-            style={{
-              display: "grid",
-              gridTemplateColumns: "1fr 320px",
-              gap: 24,
-            }}
-          >
-            <div className="cart-items" style={{ display: "grid", gap: 16 }}>
+          <div className="cart-content">
+            <div className="cart-items">
               {items.map((item) => (
-                <div
-                  key={item.id}
-                  className="cart-item"
-                  style={{
-                    display: "grid",
-                    gridTemplateColumns: "80px 1fr auto",
-                    gap: 16,
-                    alignItems: "center",
-                    border: "1px solid #eee",
-                    borderRadius: 8,
-                    padding: 12,
-                  }}
-                >
+                <div key={item.id} className="cart-item">
                   <img
                     src={
                       item.image || "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Crect width='80' height='80' fill='%23f0f0f0'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial' font-size='12' fill='%23999'%3EItem%3C/text%3E%3C/svg%3E"
                     }
                     alt={item.name}
-                    style={{
-                      width: 80,
-                      height: 80,
-                      objectFit: "cover",
-                      borderRadius: 8,
-                    }}
+                    className="cart-item-image"
                   />
-                  <div>
-                    <div style={{ fontWeight: 600 }}>{item.name}</div>
-                    <div style={{ color: "#444" }}>
+                  <div className="cart-item-info">
+                    <div className="cart-item-name">{item.name}</div>
+                    <div className="cart-item-price">
                       {currency(Number(item.price) || 0)}
                     </div>
                   </div>
-                  <div
-                    style={{ display: "flex", alignItems: "center", gap: 8 }}
-                  >
+                  <div className="cart-item-actions">
                     <button
                       className="qty-btn"
                       onClick={() => updateQuantity(item.id, item.quantity - 1)}
@@ -223,7 +194,7 @@ const CartPage = () => {
                       +
                     </button>
                     <button
-                      className="remove-btn"
+                      className="remove-btn cart-remove"
                       onClick={() => removeItem(item.id)}
                     >
                       Remove
@@ -233,65 +204,25 @@ const CartPage = () => {
               ))}
             </div>
 
-            <div
-              className="cart-summary"
-              style={{
-                border: "1px solid #eee",
-                borderRadius: 8,
-                padding: 16,
-                height: "fit-content",
-              }}
-            >
-              <h3 style={{ marginTop: 0 }}>Order Summary</h3>
-              <div style={{ display: "flex", justifyContent: "space-between" }}>
+            <div className="cart-summary">
+              <h3>Order Summary</h3>
+              <div className="cart-summary-row">
                 <span>Items</span>
                 <strong>{totalItems}</strong>
               </div>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  marginTop: 8,
-                }}
-              >
+              <div className="cart-summary-row">
                 <span>Subtotal</span>
                 <strong>{currency(totalPrice)}</strong>
               </div>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  marginTop: 4,
-                  fontSize: "0.9rem",
-                  color: "#666",
-                }}
-              >
+              <div className="cart-summary-row cart-summary-tax">
                 <span>CGST (2.5%)</span>
                 <span>{currency(totalPrice * 0.025)}</span>
               </div>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  marginTop: 4,
-                  fontSize: "0.9rem",
-                  color: "#666",
-                }}
-              >
+              <div className="cart-summary-row cart-summary-tax">
                 <span>SGST/UTGST (2.5%)</span>
                 <span>{currency(totalPrice * 0.025)}</span>
               </div>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  marginTop: 12,
-                  paddingTop: 12,
-                  borderTop: "1px solid #eee",
-                  fontSize: "1.1rem",
-                  fontWeight: "bold",
-                }}
-              >
+              <div className="cart-summary-total">
                 <span>Total</span>
                 <strong>{currency(totalPrice * 1.05)}</strong>
               </div>
@@ -299,7 +230,6 @@ const CartPage = () => {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 className="checkout-btn"
-                style={{ width: "100%", marginTop: 16 }}
                 onClick={handleCheckout}
               >
                 Proceed to Checkout
@@ -310,18 +240,11 @@ const CartPage = () => {
       </div>
 
       {/* Add more items section */}
-      <div style={{ maxWidth: 960, margin: "24px auto", padding: 16 }}>
-        <h3 style={{ marginBottom: 12 }}>Add more items</h3>
+      <section className="cart-add-more">
+        <h3>Add more items</h3>
         {menuData.length > 0 ? (
           <>
-            <div
-              style={{
-                display: "flex",
-                gap: 8,
-                flexWrap: "wrap",
-                marginBottom: 12,
-              }}
-            >
+            <div className="cart-add-more-categories">
               {menuData.map((group) => (
                 <button
                   key={group.category}
@@ -334,45 +257,19 @@ const CartPage = () => {
                 </button>
               ))}
             </div>
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))",
-                gap: 16,
-              }}
-            >
+            <div className="cart-add-more-grid">
               {flatMenuForSelectedCategory.map((mi) => (
-                <div
-                  key={mi._id}
-                  style={{
-                    border: "1px solid #eee",
-                    borderRadius: 8,
-                    padding: 12,
-                    display: "grid",
-                    gap: 8,
-                  }}
-                >
+                <div key={mi._id} className="cart-add-more-card">
                   <img
                     src={
                       mi.image ||
                       "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='180'%3E%3Crect width='300' height='180' fill='%23f0f0f0'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial' font-size='14' fill='%23999'%3EItem%3C/text%3E%3C/svg%3E"
                     }
                     alt={mi.name}
-                    style={{
-                      width: "100%",
-                      height: 140,
-                      objectFit: "cover",
-                      borderRadius: 6,
-                    }}
+                    className="cart-add-more-image"
                   />
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                    }}
-                  >
-                    <div style={{ fontWeight: 600 }}>{mi.name}</div>
+                  <div className="cart-add-more-details">
+                    <div className="cart-add-more-name">{mi.name}</div>
                     <div>{currency(Number(mi.price) || 0)}</div>
                   </div>
                   <motion.button
@@ -388,9 +285,9 @@ const CartPage = () => {
             </div>
           </>
         ) : (
-          <p style={{ color: "#666" }}>Loading menu...</p>
+          <p className="cart-add-more-loading">Loading menu...</p>
         )}
-      </div>
+      </section>
 
       {/* Checkout modal */}
       {isCheckoutOpen && (
@@ -419,7 +316,7 @@ const CartPage = () => {
               </div>
               <div className="form-field">
                 <label className="form-label">
-                  Phone <span style={{ color: "#666", fontSize: "0.9rem", fontWeight: "normal" }}>(WhatsApp for tracking)</span>
+                  Phone <span className="form-label-hint">(WhatsApp for tracking)</span>
                 </label>
                 <input
                   className="text-input"
@@ -430,20 +327,20 @@ const CartPage = () => {
                   required
                 />
               </div>
-              <div style={{ marginTop: 16, paddingTop: 16, borderTop: "1px solid #eee" }}>
-                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
+              <div className="modal-summary">
+                <div className="modal-summary-row">
                   <span>Subtotal</span>
                   <span>{currency(totalPrice)}</span>
                 </div>
-                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8, fontSize: "0.9rem", color: "#666" }}>
+                <div className="modal-summary-row modal-summary-tax">
                   <span>CGST (2.5%)</span>
                   <span>{currency(totalPrice * 0.025)}</span>
                 </div>
-                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8, fontSize: "0.9rem", color: "#666" }}>
+                <div className="modal-summary-row modal-summary-tax">
                   <span>SGST/UTGST (2.5%)</span>
                   <span>{currency(totalPrice * 0.025)}</span>
                 </div>
-                <div className="order-total-row" style={{ marginTop: 12, paddingTop: 12, borderTop: "1px solid #eee" }}>
+                <div className="order-total-row modal-summary-total">
                   <strong>Total</strong>
                   <strong>{currency(totalPrice * 1.05)}</strong>
                 </div>
@@ -456,13 +353,13 @@ const CartPage = () => {
                 >
                   Cancel
                 </button>
-                <button 
-                  type="submit" 
+                <button
+                  type="submit"
                   className="checkout-btn"
                   disabled={isSubmittingOrder}
                 >
                   {isSubmittingOrder ? (
-                    <span style={{ display: "flex", alignItems: "center", gap: "0.5rem", justifyContent: "center" }}>
+                    <span className="checkout-loading">
                       <Loading type="food" size="small" />
                       <span>Submitting...</span>
                     </span>
