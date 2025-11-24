@@ -65,7 +65,7 @@ mongoose
   });
 
 // =======================
-// 📤 Test Endpoints (for debugging Render)
+// 📤 Test & Warmup Endpoints
 // =======================
 
 // Test environment variables
@@ -181,6 +181,15 @@ app.get("/test-email", async (req, res) => {
       message: err && err.message ? err.message : String(err),
     });
   }
+});
+
+// Lightweight warmup endpoint so the frontend can "wake" the backend
+app.get("/api/warmup", (req, res) => {
+  res.json({
+    status: "ok",
+    message: "Backend awake",
+    timestamp: Date.now(),
+  });
 });
 
 // =======================

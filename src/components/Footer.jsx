@@ -70,10 +70,19 @@ const Footer = () => {
             Shimla Kaurik Road, Dharampur,  Himachal Pradesh 173209
           </p>
           <p>
-            <i className="fas fa-phone"></i> 09896532415
+            <i className="fas fa-phone"></i>{" "}
+            <a href="tel:09896532415" className="footer-contact-link">
+              09896532415
+            </a>
           </p>
           <p>
-            <i className="fas fa-envelope"></i> punjabirasoikoti@gmail.com
+            <i className="fas fa-envelope"></i>{" "}
+            <a
+              href="mailto:punjabirasoikoti@gmail.com"
+              className="footer-contact-link"
+            >
+              punjabirasoikoti@gmail.com
+            </a>
           </p>
         </div>
 

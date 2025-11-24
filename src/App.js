@@ -20,6 +20,7 @@ import { CartProvider } from "./context/CartContext";
 import AdminOrdersPage from "./pages/AdminOrdersPage";
 import ErrorBoundary from "./components/ErrorBoundary";
 import ScrollToTop from "./components/ScrollToTop";
+import { apiFetch } from "./utils/api";
 
 import FoodOrderIcon from "./components/FoodOrderIcon";
 import CookingPotIcon from "./components/CookingPotIcon";
@@ -30,6 +31,21 @@ const HomePage = () => {
   const [testimonials, setTestimonials] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isReservationOpen, setIsReservationOpen] = useState(false);
+
+  // Fire a tiny request to wake the backend (useful on cold starts)
+  useEffect(() => {
+    const controller = new AbortController();
+    apiFetch("/api/warmup", { signal: controller.signal })
+      .then(() => {
+        console.log("[Warmup] Backend awake");
+      })
+      .catch((error) => {
+        if (error.name !== "AbortError") {
+          console.warn("[Warmup] Backend warmup failed:", error);
+        }
+      });
+    return () => controller.abort();
+  }, []);
 
   const features = [
     {

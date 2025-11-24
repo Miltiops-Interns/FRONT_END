@@ -1631,6 +1631,32 @@ body {
   color: #888;
 }
 
+.footer-contact-link {
+  color: #ccc;
+  text-decoration: none;
+  transition: color 0.3s ease;
+  cursor: pointer;
+  display: inline-block;
+  padding: 2px 4px; /* Add some padding for better touch target on mobile */
+  margin: -2px -4px; /* Compensate padding to maintain layout */
+}
+
+.footer-contact-link:hover,
+.footer-contact-link:active {
+  color: var(--secondary-color);
+  text-decoration: underline;
+}
+
+/* Ensure touch targets are adequate on mobile */
+@media (max-width: 768px) {
+  .footer-contact-link {
+    padding: 4px 6px;
+    margin: -4px -6px;
+    min-width: 44px; /* Minimum touch target size */
+    text-align: center;
+  }
+}
+
 /* Contact Section Styles */
 .contact-section {
   padding: 80px 20px;
